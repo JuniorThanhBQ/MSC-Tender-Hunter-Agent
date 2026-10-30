@@ -7,21 +7,38 @@
 <p><strong>MSC Tender Hunter Agent - A Graduation Internship Project </strong></p>
 
 <p>
- 
+  <a href="https://docs.gitlab.com/ci/"><img src="https://img.shields.io/badge/GitLab-CI%2FCD-FC6D26?logo=gitlab&logoColor=white" alt="GitLab CI/CD" /></a>
+  <a href="https://www.docker.com/"><img src="https://img.shields.io/badge/Docker-29.9.2-2496ED?logo=docker&logoColor=white" alt="Docker" /></a>
+  <a href="https://docs.docker.com/compose/"><img src="https://img.shields.io/badge/Docker%20Compose-v5.6.1-2496ED?logo=docker&logoColor=white" alt="Docker Compose" /></a>
 </p>
-
 
 </div>
 
 ## I. Introduction
 
-IndigoJSC-TenderHunter-Agent
+Available on October 31st.
 
-## II. Techstack
+## II. Project Aim and Scope
+
+Available on October 31st.
+
+## III. Project Tech-stacks
+
+Available on October 31st.
+
+## IV. Overall Structure of the Project 
+
+Available on October 31st.
+
+## V. Project License and Legal Issue
+
+Available on October 31st.
+
+## VI. Contributors
+
+Available on October 31st.
 
 
-## III. 
+## VII. Documents and References
 
-
-## IV. References
-- 
+1. Project Docs: [Docs](docs/)   
