@@ -218,3 +218,9 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+
+# Sensitive information
+docs/references/ai-synthesized/
+docs/references/website/
+docs/references/company_information.md

@@ -1,0 +1,17 @@
+User-agent: *
+Disallow: /data/
+Disallow: /includes/
+Disallow: /install/
+Disallow: /modules/
+Disallow: /users/
+Disallow: /bannersdt/click/
+Disallow: /statistics/
+Disallow: /en/bannersdt/click/
+Disallow: /en/statistics/
+Disallow: /en/users/
+Disallow: /banners/click/
+Disallow: /en/banners/click/
+Disallow: /vi/banners/click/
+Disallow: /vi/statistics/
+Disallow: /vi/users/
+Sitemap: https://dauthau.asia/sitemap.xml

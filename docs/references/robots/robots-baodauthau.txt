@@ -1,0 +1,25 @@
+User-agent: *
+Allow: /
+Disallow: /print.html
+Disallow: /search/
+Disallow: /tim-kiem/
+Disallow: /search.html
+Disallow: /tim-kiem.html
+Disallow: /tu-khoa.html
+Disallow: /tag.html
+User-agent: facebookexternalhit
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: CCBot
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: OAI-SearchBot
+Allow: /
+Sitemap: https://baodauthau.vn/sitemap.xml
+Sitemap: https://baodauthau.vn/sitemaps/google-news.xml
