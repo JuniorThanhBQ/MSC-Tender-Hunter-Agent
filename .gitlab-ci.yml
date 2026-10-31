@@ -1,0 +1,23 @@
+workflow:
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "api"'
+    - if: '$CI_COMMIT_BRANCH =~ /^github-ci\//'
+      when: never
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+    - if: '$CI_COMMIT_BRANCH && $CI_OPEN_MERGE_REQUESTS && $CI_PIPELINE_SOURCE == "push"'
+      when: never
+    - if: '$CI_COMMIT_BRANCH'
+
+stages:
+  - validate
+
+default:
+  image: python:3.13-slim
+  interruptible: true
+  timeout: 10 minutes
+
+repository-validation:
+  stage: validate
+  script:
+    - python -m pip install --disable-pip-version-check PyYAML==6.0.3
+    - python scripts/ci/validate_repository.py
