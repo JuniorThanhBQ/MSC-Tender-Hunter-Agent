@@ -224,3 +224,9 @@ __marimo__/
 docs/references/ai-synthesized/
 docs/references/website/
 docs/references/company_information.md
+
+# Graphify - Generated Files
+graphify-out/
+.graphify/
+.graphify_*.json
+.graphify_python
