@@ -1,0 +1,15 @@
+User-agent: *
+Disallow: /admin/
+Disallow: /composer.json
+Disallow: /data/
+Disallow: /includes/
+Disallow: /install/
+Disallow: /modules/
+Disallow: /robots.php
+Disallow: /web.config
+Disallow: /vi/banners/click/
+Disallow: /vi/statistics/
+Disallow: /vi/users/
+Disallow: /en/banners/click/
+Disallow: /en/users/
+Sitemap: https://dauthau.net/sitemap.xml

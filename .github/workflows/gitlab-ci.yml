@@ -1,0 +1,31 @@
+# SPDX-License-Identifier: MPL-2.0
+name: GitLab CI
+
+on:
+  push:
+    branches: [main, develop]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  gitlab:
+    name: GitLab project pipeline
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - name: Run GitLab pipeline and return result
+        env:
+          GITLAB_TOKEN: ${{ secrets.GITLAB_TOKEN }}
+          GITLAB_PROJECT_ID: ${{ vars.GITLAB_PROJECT_ID }}
+          GITLAB_PROJECT_URL: ${{ vars.GITLAB_PROJECT_URL }}
+          GITLAB_URL: ${{ vars.GITLAB_URL || 'https://gitlab.com' }}
+        run: python scripts/ci/gitlab_bridge.py

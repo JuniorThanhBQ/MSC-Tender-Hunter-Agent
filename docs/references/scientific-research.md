@@ -1,0 +1,1 @@
+1. [Public Procurement and Reputation: An Agent-Based Model](https://www.researchgate.net/publication/328472852_Public_Procurement_and_Reputation_An_Agent-Based_Model)

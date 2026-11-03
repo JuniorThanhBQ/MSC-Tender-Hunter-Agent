@@ -1,0 +1,13 @@
+User-Agent: *
+Allow: /
+Disallow: /api/
+Disallow: /hom-nay
+Disallow: /dang-nhap
+Disallow: /lich-thau
+Disallow: /co-hoi
+Disallow: /thong-bao
+Disallow: /cai-dat
+Disallow: /nang-luc
+
+Host: https://dauthau.co
+Sitemap: https://dauthau.co/sitemap.xml

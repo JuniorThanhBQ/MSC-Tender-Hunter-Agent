@@ -1,0 +1,5 @@
+1. [mua-sam-cong-vn](https://muasamcong.mof.gov.vn/web/guest/guideline-contractors)
+2. [How Can I Use AI to Streamline Our Tendering Process?](https://info.mercell.com/en/blog/ai-in-tendering)
+3. [Governing with Artificial Intelligence](https://www.oecd.org/en/publications/governing-with-artificial-intelligence_795de142-en/full-report/ai-in-public-procurement_2e095543.html)
+4. [AI in public procurement: between experimentation and impact](https://www.open-contracting.org/2026/07/09/ai-in-public-procurement-between-experimentation-and-impact/)
+5. [Agent-Based Tender Submission Platform](https://graphora.io/case-studies/agent-based-tender-submission-platform)
