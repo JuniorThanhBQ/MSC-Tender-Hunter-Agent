@@ -11,13 +11,12 @@
   <a href="https://www.docker.com/"><img src="https://img.shields.io/badge/Docker-29.9.2-2496ED?logo=docker&logoColor=white" alt="Docker" /></a>
   <a href="https://docs.docker.com/compose/"><img src="https://img.shields.io/badge/Docker%20Compose-v5.6.1-2496ED?logo=docker&logoColor=white" alt="Docker Compose" /></a>
   <a href="https://github.com/graphlify/graphlify"><img src="https://img.shields.io/badge/Graphify-v0.9.101-007ACC?logo=graphql&logoColor=white" alt="Graphify" /></a>
-  <a href="https://react.dev/"><img src="https://img.shields.io/badge/React-Proposed-61DAFB?logo=react&logoColor=black" alt="React (proposed)" /></a>
-  <a href="https://inertiajs.com/"><img src="https://img.shields.io/badge/Inertia-Proposed-9553E9?logo=inertia&logoColor=white" alt="Inertia (proposed)" /></a>
-  <a href="https://vite.dev/"><img src="https://img.shields.io/badge/Vite-Proposed-646CFF?logo=vite&logoColor=white" alt="Vite (proposed)" /></a>
-  <a href="https://laravel.com/"><img src="https://img.shields.io/badge/Laravel-Proposed-FF2D20?logo=laravel&logoColor=white" alt="Laravel (proposed)" /></a>
+  <a href="https://www.npmjs.com/package/react/v/19.3.1"><img src="https://img.shields.io/badge/React-19.3.1-61DAFB?logo=react&logoColor=black" alt="React 19.3.1 (planned stack reference)" /></a>
+  <a href="https://www.npmjs.com/package/vite/v/8.3.5"><img src="https://img.shields.io/badge/Vite-8.3.5-646CFF?logo=vite&logoColor=white" alt="Vite 8.3.5 (planned stack reference)" /></a>
+  <a href="https://packagist.org/packages/laravel/framework#v13.39.0"><img src="https://img.shields.io/badge/Laravel-13.39.0-FF2D20?logo=laravel&logoColor=white" alt="Laravel 13.39.0 (planned stack reference)" /></a>
   <a href="https://pypi.org/project/pydantic-ai/2.65.0/"><img src="https://img.shields.io/badge/PydanticAI-2.65.0-E92063?logo=pydantic&logoColor=white" alt="PydanticAI 2.65.0 (selected agent framework)" /></a>
-  <a href="https://fastapi.tiangolo.com/"><img src="https://img.shields.io/badge/FastAPI-Proposed-009688?logo=fastapi&logoColor=white" alt="FastAPI (proposed)" /></a>
-  <a href="https://www.postgresql.org/"><img src="https://img.shields.io/badge/PostgreSQL-Proposed-4169E1?logo=postgresql&logoColor=white" alt="PostgreSQL (proposed)" /></a>
+  <a href="https://pypi.org/project/fastapi/0.162.0/"><img src="https://img.shields.io/badge/FastAPI-0.162.0-009688?logo=fastapi&logoColor=white" alt="FastAPI 0.162.0 (planned stack reference)" /></a>
+  <a href="https://www.postgresql.org/docs/release/18.6/"><img src="https://img.shields.io/badge/PostgreSQL-18.6-4169E1?logo=postgresql&logoColor=white" alt="PostgreSQL 18.6 (upstream release reference; Supabase version not selected)" /></a>
   <a href="https://supabase.com/"><img src="https://img.shields.io/badge/Supabase-Database_host-3FCF8E?logo=supabase&logoColor=black" alt="Supabase database hosting (proposed)" /></a>
 </p>
 
@@ -183,6 +182,8 @@ The proposed stack is documented in [ADR-001](docs/adrs/ADR-001-technology-stack
 | Agent core | PydanticAI | Primary framework for typed agent tools and structured extraction/matching outputs. |
 
 PydanticAI is selected as the primary agent framework. LangGraph, LlamaIndex, Haystack, and CrewAI are retained as considered alternatives in ADR-001. The badge records the latest stable PyPI release checked on November 3, 2026: [2.65.0](https://pypi.org/project/pydantic-ai/2.65.0/). This is a documentation reference, not an installed or locked dependency version.
+
+The React, Vite, Laravel, FastAPI, and PostgreSQL badges also show upstream stable releases checked on November 3, 2026. They are reference versions, not installed or locked dependencies. The PostgreSQL version available for this project's Supabase instance has not been chosen or verified.
 
 Authentication/SSO implementation, queues, temporary cache, document handling/storage, model provider, observability, and application/agent hosting remain TBD while the SRS and BDRS are developed. Supabase Auth, Storage, and other Supabase services are not selected by choosing its PostgreSQL hosting. Database use must respect the MVP scope above: tender data is temporary, and copied tender documents are not stored permanently.
 

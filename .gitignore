@@ -230,3 +230,15 @@ graphify-out/
 .graphify/
 .graphify_*.json
 .graphify_python
+
+# Backend (Laravel)
+Laravel/vendor/
+Laravel/.env
+Laravel/storage/*.key
+Laravel/storage/logs/
+Laravel/storage/framework/
+
+# Frontend (React + Vite)
+web/node_modules/
+web/dist/
+web/.env.local
