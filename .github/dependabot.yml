@@ -1,0 +1,124 @@
+
+# SPDX-License-Identifier: MPL-2.0
+
+version: 2
+updates:
+  - package-ecosystem: "uv"
+    directory: "/engine"
+    schedule:
+      interval: "weekly"
+      day: "wednesday"
+      time: "08:30"
+      timezone: "Asia/Ho_Chi_Minh"
+    open-pull-requests-limit: 0
+    groups:
+      patch-minor:
+        applies-to: "version-updates"
+        patterns:
+          - "*"
+        update-types:
+          - "patch"
+          - "minor"
+    assignees:
+      - "JuniorThanhBQ"
+    labels:
+      - "dependencies"
+      - "maintenance"
+    commit-message:
+      prefix: "Maintenance"
+      include: "scope"
+    cooldown:
+      default-days: 7
+      semver-major-days: 14
+      semver-minor-days: 7
+      semver-patch-days: 7
+
+  - package-ecosystem: "composer"
+    directory: "/laravel"
+    schedule:
+      interval: "weekly"
+      day: "wednesday"
+      time: "08:30"
+      timezone: "Asia/Ho_Chi_Minh"
+    open-pull-requests-limit: 0
+    groups:
+      patch-minor:
+        applies-to: "version-updates"
+        patterns:
+          - "*"
+        update-types:
+          - "patch"
+          - "minor"
+    assignees:
+      - "JuniorThanhBQ"
+    labels:
+      - "dependencies"
+      - "maintenance"
+    commit-message:
+      prefix: "Maintenance"
+      include: "scope"
+    cooldown:
+      default-days: 7
+      semver-major-days: 14
+      semver-minor-days: 7
+      semver-patch-days: 7
+
+  - package-ecosystem: "npm"
+    directory: "/web"
+    schedule:
+      interval: "weekly"
+      day: "wednesday"
+      time: "08:30"
+      timezone: "Asia/Ho_Chi_Minh"
+    open-pull-requests-limit: 0
+    groups:
+      patch-minor:
+        applies-to: "version-updates"
+        patterns:
+          - "*"
+        update-types:
+          - "patch"
+          - "minor"
+    assignees:
+      - "JuniorThanhBQ"
+    labels:
+      - "dependencies"
+      - "maintenance"
+    commit-message:
+      prefix: "Maintenance"
+      include: "scope"
+    cooldown:
+      default-days: 7
+      semver-major-days: 14
+      semver-minor-days: 7
+      semver-patch-days: 7
+
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "wednesday"
+      time: "08:30"
+      timezone: "Asia/Ho_Chi_Minh"
+    open-pull-requests-limit: 0
+    groups:
+      patch-minor:
+        applies-to: "version-updates"
+        patterns:
+          - "*"
+        update-types:
+          - "patch"
+          - "minor"
+    assignees:
+      - "JuniorThanhBQ"
+    labels:
+      - "dependencies"
+      - "maintenance"
+    commit-message:
+      prefix: "Maintenance"
+      include: "scope"
+    cooldown:
+      default-days: 7
+      semver-major-days: 14
+      semver-minor-days: 7
+      semver-patch-days: 7
