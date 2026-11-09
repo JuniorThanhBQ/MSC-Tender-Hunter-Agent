@@ -1,0 +1,74 @@
+name: Bug Report
+description: Report a bug or unintended behavior in the software.
+title: "[Bug]: "
+labels: ["bug"]
+assignees:
+  - JuniorThanhBQ
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for reporting a bug. Please fill in the details below to help me understand and resolve the issue quickly.
+  - type: textarea
+    id: summary
+    attributes:
+      label: Bug Summary
+      description: Provide a clear and concise summary of the issue.
+      placeholder: A short description of what went wrong.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Steps to Reproduce
+      description: Please provide step-by-step instructions to reproduce the problem.
+      placeholder: |
+        1. Go to '...'
+        2. Run '...'
+        3. See error
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected Behavior
+      description: Explain what you expected to happen.
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual Behavior & Logs
+      description: Describe what actually occurred. Include error messages or stack traces if available.
+      render: shell
+    validations:
+      required: true
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment Details
+      description: Provide your execution environment details.
+      value: |
+        - OS: [e.g. Windows 11, Ubuntu 22.04]
+        - Runtime / Language: [e.g. Python 3.11, Node.js 20, PHP 8.2]
+        - Branch / Commit / Version: [e.g. main, v1.0.0]
+    validations:
+      required: false
+  - type: textarea
+    id: additional-context
+    attributes:
+      label: Additional Context
+      description: Add any other context, screenshots, or related links here.
+    validations:
+      required: false
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: Submission Checklist
+      options:
+        - label: I searched existing issues to ensure this is not a duplicate.
+          required: true
+        - label: I provided sufficient details to reproduce the bug.
+          required: true
+        - label: I confirmed that no sensitive credentials or private tokens are included.
+          required: true

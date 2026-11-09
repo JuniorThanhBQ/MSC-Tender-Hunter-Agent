@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Community Discussions & Questions
+    url: https://github.com/JuniorThanhBQ/MSC-Tender-Hunter-Agent/discussions
+    about: Please ask general questions or discuss ideas with the community here.
+  - name: Security Vulnerability Reporting
+    url: https://github.com/JuniorThanhBQ/MSC-Tender-Hunter-Agent/security/advisories/new
+    about: Please report security vulnerabilities privately according to our security policy.

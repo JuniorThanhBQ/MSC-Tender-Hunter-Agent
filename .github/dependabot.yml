@@ -10,10 +10,17 @@ updates:
       day: "wednesday"
       time: "08:30"
       timezone: "Asia/Ho_Chi_Minh"
-    open-pull-requests-limit: 0
+    open-pull-requests-limit: 10
     groups:
       patch-minor:
         applies-to: "version-updates"
+        patterns:
+          - "*"
+        update-types:
+          - "patch"
+          - "minor"
+      security-patch-minor:
+        applies-to: "security-updates"
         patterns:
           - "*"
         update-types:
@@ -40,10 +47,17 @@ updates:
       day: "wednesday"
       time: "08:30"
       timezone: "Asia/Ho_Chi_Minh"
-    open-pull-requests-limit: 0
+    open-pull-requests-limit: 10
     groups:
       patch-minor:
         applies-to: "version-updates"
+        patterns:
+          - "*"
+        update-types:
+          - "patch"
+          - "minor"
+      security-patch-minor:
+        applies-to: "security-updates"
         patterns:
           - "*"
         update-types:
@@ -62,18 +76,26 @@ updates:
       semver-major-days: 14
       semver-minor-days: 7
       semver-patch-days: 7
-
   - package-ecosystem: "npm"
-    directory: "/web"
+    directories:
+      - "/web"
+      - "/laravel"
     schedule:
       interval: "weekly"
       day: "wednesday"
       time: "08:30"
       timezone: "Asia/Ho_Chi_Minh"
-    open-pull-requests-limit: 0
+    open-pull-requests-limit: 10
     groups:
       patch-minor:
         applies-to: "version-updates"
+        patterns:
+          - "*"
+        update-types:
+          - "patch"
+          - "minor"
+      security-patch-minor:
+        applies-to: "security-updates"
         patterns:
           - "*"
         update-types:
@@ -100,7 +122,7 @@ updates:
       day: "wednesday"
       time: "08:30"
       timezone: "Asia/Ho_Chi_Minh"
-    open-pull-requests-limit: 0
+    open-pull-requests-limit: 10
     groups:
       patch-minor:
         applies-to: "version-updates"
