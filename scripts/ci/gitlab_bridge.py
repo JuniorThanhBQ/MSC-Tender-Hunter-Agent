@@ -29,7 +29,12 @@ def main():
     base = os.environ.get("GITLAB_URL", "https://gitlab.com").rstrip("/")
     for value in (base, repository):
         parsed = urlsplit(value)
-        if parsed.scheme != "https" or not parsed.hostname or parsed.username or parsed.password:
+        if (
+            parsed.scheme != "https"
+            or not parsed.hostname
+            or parsed.username
+            or parsed.password
+        ):
             raise ValueError("GitLab URLs must use HTTPS without embedded credentials")
     if urlsplit(repository).netloc != urlsplit(base).netloc:
         raise ValueError("GITLAB_PROJECT_URL must belong to GITLAB_URL")
@@ -60,18 +65,27 @@ def main():
 
     credentials = base64.b64encode(f"oauth2:{token}".encode()).decode()
     environment = os.environ.copy()
-    environment.update({
-        "GIT_TERMINAL_PROMPT": "0",
-        "GIT_CONFIG_COUNT": "1",
-        "GIT_CONFIG_KEY_0": f"http.{base}/.extraHeader",
-        "GIT_CONFIG_VALUE_0": f"Authorization: Basic {credentials}",
-    })
+    environment.update(
+        {
+            "GIT_TERMINAL_PROMPT": "0",
+            "GIT_CONFIG_COUNT": "1",
+            "GIT_CONFIG_KEY_0": f"http.{base}/.extraHeader",
+            "GIT_CONFIG_VALUE_0": f"Authorization: Basic {credentials}",
+        }
+    )
     pushed = subprocess.run(
         ["git", "push", repository, f"{sha}:refs/heads/{branch}"],
-        env=environment, capture_output=True, text=True,
+        check=False,
+        env=environment,
+        capture_output=True,
+        text=True,
     )
     if pushed.returncode:
-        detail = pushed.stderr.strip() or pushed.stdout.strip() or "Git returned no error details"
+        detail = (
+            pushed.stderr.strip()
+            or pushed.stdout.strip()
+            or "Git returned no error details"
+        )
         for secret in (credentials, quote(token, safe=""), token):
             detail = detail.replace(secret, "[REDACTED]")
         raise RuntimeError(f"GitLab push failed (exit {pushed.returncode}):\n{detail}")
@@ -81,7 +95,9 @@ def main():
     try:
         pipeline = request("POST", "/pipeline", {"ref": branch})
         if pipeline["sha"] != sha:
-            raise RuntimeError("GitLab pipeline commit does not match the GitHub commit")
+            raise RuntimeError(
+                "GitLab pipeline commit does not match the GitHub commit"
+            )
         print(f"GitLab pipeline: {pipeline['web_url']}", flush=True)
         deadline = time.monotonic() + 2100
         while time.monotonic() < deadline:
@@ -101,7 +117,9 @@ def main():
             summary = os.environ.get("GITHUB_STEP_SUMMARY")
             if summary:
                 with open(summary, "a", encoding="utf-8") as stream:
-                    stream.write(f"GitLab pipeline: {pipeline['web_url']}\n\nResult: **{status}**\n\nCommit: `{sha}`\n")
+                    stream.write(
+                        f"GitLab pipeline: {pipeline['web_url']}\n\nResult: **{status}**\n\nCommit: `{sha}`\n"
+                    )
             if not terminal:
                 try:
                     request("POST", f"/pipelines/{pipeline['id']}/cancel")
@@ -110,7 +128,10 @@ def main():
         try:
             request("DELETE", f"/repository/branches/{quote(branch, safe='')}")
         except (GitLabAPIError, OSError) as error:
-            print(f"Could not remove temporary GitLab branch {branch}: {error}", file=sys.stderr)
+            print(
+                f"Could not remove temporary GitLab branch {branch}: {error}",
+                file=sys.stderr,
+            )
 
 
 if __name__ == "__main__":

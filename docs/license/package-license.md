@@ -6,7 +6,7 @@
 
 ## 1. Compliance Framework: Mozilla Public License 2.0
 
-The project source code is licensed under the **Mozilla Public License Version 2.0 (MPL-2.0)** as set forth in [`LICENSE`](./MPL-V2.md). 
+The project source code is licensed under the **Mozilla Public License Version 2.0 (MPL-2.0)** as set forth in [`LICENSE`](./MPL-V2.md).
 
 ### Key MPL-2.0 Rules for External Packages
 1. **File-Level Copyleft**: MPL-2.0 applies strictly at the file boundary (Sections 1.4 and 3.1). Any modification to an MPL-covered file must remain under MPL-2.0.

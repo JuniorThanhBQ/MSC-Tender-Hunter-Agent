@@ -1,0 +1,65 @@
+name: Maintenance Request
+description: Request technical debt reduction, refactoring, dependency updates, or performance work.
+title: "[Maintenance]: "
+labels: ["maintenance"]
+assignees:
+  - JuniorThanhBQ
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use this form to propose refactoring, dependency upgrades, or technical debt resolution.
+  - type: textarea
+    id: summary
+    attributes:
+      label: Maintenance Overview
+      description: Provide a clear overview of the required maintenance task.
+    validations:
+      required: true
+  - type: dropdown
+    id: category
+    attributes:
+      label: Maintenance Category
+      description: Select the category that best describes this task.
+      options:
+        - Dependency Upgrade
+        - Code Refactoring & Cleanup
+        - Performance & Scalability Optimization
+        - Security Hardening
+        - CI/CD & Build Pipeline
+    validations:
+      required: true
+  - type: textarea
+    id: justification
+    attributes:
+      label: Motivation & Justification
+      description: Explain why this maintenance is necessary and the impact if left unaddressed.
+    validations:
+      required: true
+  - type: textarea
+    id: implementation-plan
+    attributes:
+      label: Proposed Implementation Plan
+      description: Outline the steps or tasks necessary to complete this maintenance.
+      placeholder: |
+        1. Audit current usage...
+        2. Refactor module X...
+        3. Validate test suite...
+    validations:
+      required: true
+  - type: textarea
+    id: risks
+    attributes:
+      label: Risks & Rollback Strategy
+      description: Describe any potential regressions, breaking changes, or precautions.
+    validations:
+      required: false
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: Submission Checklist
+      options:
+        - label: This task has been evaluated for breaking changes.
+          required: true
+        - label: Relevant tests and documentation updates will be included.
+          required: true

@@ -1,0 +1,69 @@
+name: Feature Request
+description: Propose a new feature, improvement, or architectural enhancement.
+title: "[Feature]: "
+labels: ["enhancement"]
+assignees:
+  - JuniorThanhBQ
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for proposing an enhancement! Please describe your idea below.
+  - type: textarea
+    id: summary
+    attributes:
+      label: Feature Summary
+      description: Provide a concise summary of the proposed feature.
+    validations:
+      required: true
+  - type: textarea
+    id: problem-statement
+    attributes:
+      label: Problem Statement
+      description: Describe the problem, limitation, or user need this feature addresses.
+      placeholder: Currently, when attempting to...
+    validations:
+      required: true
+  - type: textarea
+    id: proposed-solution
+    attributes:
+      label: Proposed Solution
+      description: Explain the solution or behavior you would like to see implemented.
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives Considered
+      description: Describe any alternative solutions or workarounds you considered.
+    validations:
+      required: false
+  - type: dropdown
+    id: affected-component
+    attributes:
+      label: Primary Affected Component
+      description: Select the main subsystem or area this proposal targets.
+      options:
+        - Crawler / Agent Engine
+        - Backend (FastAPI / Laravel)
+        - Frontend (React / Vite)
+        - Infrastructure / CI/CD
+        - General Architecture
+    validations:
+      required: true
+  - type: textarea
+    id: additional-context
+    attributes:
+      label: Additional Context
+      description: Add any architecture diagrams, mockups, or reference links here.
+    validations:
+      required: false
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: Submission Checklist
+      options:
+        - label: I searched existing issues to verify this feature has not been requested yet.
+          required: true
+        - label: This proposal aligns with the goals and technical scope of the project.
+          required: true

@@ -18,7 +18,7 @@
 4. [The Tender law in Viet Nam since 2023](https://xaydungchinhsach.chinhphu.vn/toan-van-luat-dau-thau-119230728060101267.htm?utm_source=chatgpt.com)
 
 ## Tender Description and Rules in Global
-1. [Mercell](https://info.mercell.com/en/procurement-insights/what-is-public-tendering/) 
+1. [Mercell](https://info.mercell.com/en/procurement-insights/what-is-public-tendering/)
 2. [AutoRFP](https://autorfp.ai/blog/tender-meaning)
 
 ## AI Agent Description in Technical

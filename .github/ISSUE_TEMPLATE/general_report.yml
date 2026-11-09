@@ -1,0 +1,48 @@
+name: General Report
+description: Submit a general operational report, project inquiry, or administrative notice.
+title: "[General]: "
+labels: ["general"]
+assignees:
+  - JuniorThanhBQ
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Please submit general updates, project inquiries, or task status reports using this form.
+  - type: input
+    id: topic
+    attributes:
+      label: Topic
+      description: A concise topic or subject line for this report.
+    validations:
+      required: true
+  - type: textarea
+    id: description
+    attributes:
+      label: Description & Observations
+      description: Detail your observations, notes, findings, or questions.
+    validations:
+      required: true
+  - type: textarea
+    id: action-items
+    attributes:
+      label: Key Takeaways or Proposed Actions
+      description: Highlight decisions required, answers sought, or recommended next steps.
+    validations:
+      required: true
+  - type: textarea
+    id: additional-context
+    attributes:
+      label: Additional Context
+      description: Attach relevant links, metrics, logs, or reference materials.
+    validations:
+      required: false
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: Submission Checklist
+      options:
+        - label: The report is clear and easy to understand.
+          required: true
+        - label: All sensitive tokens or private credentials have been removed.
+          required: true

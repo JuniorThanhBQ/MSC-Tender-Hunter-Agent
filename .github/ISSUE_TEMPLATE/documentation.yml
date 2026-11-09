@@ -1,0 +1,54 @@
+name: Documentation Update
+description: Propose new documentation, report inaccuracies, or improve existing guides.
+title: "[Docs]: "
+labels: ["documentation"]
+assignees:
+  - JuniorThanhBQ
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for helping improve our documentation!
+  - type: textarea
+    id: summary
+    attributes:
+      label: Documentation Summary
+      description: Provide a brief summary of the documentation update or missing content.
+    validations:
+      required: true
+  - type: input
+    id: affected-path
+    attributes:
+      label: Affected Document Path / URL
+      description: Specify the file path, page URL, or section name.
+      placeholder: docs/architecture/overview.md
+    validations:
+      required: true
+  - type: textarea
+    id: proposed-changes
+    attributes:
+      label: Proposed Changes
+      description: Describe what needs to be added, modified, or removed.
+    validations:
+      required: true
+  - type: dropdown
+    id: change-type
+    attributes:
+      label: Change Type
+      description: What type of documentation change is this?
+      options:
+        - Correction of inaccurate or outdated information
+        - Missing documentation for new or existing features
+        - Clarification, typos, and formatting improvements
+        - Architectural or design record (ADR) update
+    validations:
+      required: true
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: Submission Checklist
+      options:
+        - label: I verified that the proposed documentation changes are accurate.
+          required: true
+        - label: I checked spelling, grammar, and markdown formatting standards.
+          required: true

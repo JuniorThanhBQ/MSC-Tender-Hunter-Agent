@@ -60,7 +60,7 @@ sequenceDiagram
 ```
 
 > [!NOTE]
-> 
+>
 > In simple terms, the bidding process involves three main roles: the project owner or investor, the organization that invites bids, and the contractor who provides the required products or services. Sometimes, the project owner and the organization inviting bids can be the same company.
 
 ```mermaid
@@ -87,7 +87,7 @@ flowchart TB
 ```
 
 > [!IMPORTANT]
-> 
+>
 > This process can benefit both sides. The project owner wants to find a qualified contractor who can meet the project’s needs, such as consulting and service integration. At the same time, contractors look for bid packages that match their skills, have risks they can manage, and offer good opportunities to make money.
 
 ```mermaid
@@ -188,7 +188,7 @@ The React, Vite, Laravel, FastAPI, and PostgreSQL badges also show upstream stab
 Authentication/SSO implementation, queues, temporary cache, document handling/storage, model provider, observability, and application/agent hosting remain TBD while the SRS and BDRS are developed. Supabase Auth, Storage, and other Supabase services are not selected by choosing its PostgreSQL hosting. Database use must respect the MVP scope above: tender data is temporary, and copied tender documents are not stored permanently.
 
 
-## IV. Overall Structure of the Project 
+## IV. Overall Structure of the Project
 
 
 ```mermaid
@@ -292,7 +292,7 @@ Currently, I am the primary contributor (the developer). There are also some ind
 5. Software Requirements Specification: [SRS](docs/srs/)
 6. Business Requirements Document: [BDRS](docs/bdrs/)
 7. Architecture Decision Record: [ADRS](docs/adrs/)
-8. SaaS Live Production: Not Available  
+8. SaaS Live Production: Not Available
 
 
 ## VIII. Acknowledge of using AI

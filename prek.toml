@@ -1,0 +1,54 @@
+# Configuration file for `prek`, a git hook framework written in Rust.
+# See https://prek.j178.dev for more information.
+#:schema https://www.schemastore.org/prek.json
+
+[[repos]]
+repo = "builtin"
+hooks = [
+    { id = "trailing-whitespace" },
+    { id = "end-of-file-fixer" },
+    { id = "check-added-large-files" },
+    { id = "check-merge-conflict" },
+    { id = "check-case-conflict" },
+    { id = "detect-private-key" },
+    { id = "check-yaml" },
+    { id = "check-toml" },
+    { id = "check-json", exclude = "tsconfig.*\\.json" },
+    { id = "check-jsonc", files = "tsconfig.*\\.json" },
+]
+
+[[repos]]
+repo = "local"
+
+[[repos.hooks]]
+id = "ruff-lint"
+name = "Ruff - Python linter"
+language = "system"
+entry = "uv run ruff check --force-exclude"
+files = "\\.(py|pyi)$"
+args = ["--fix"]
+pass_filenames = true
+
+[[repos.hooks]]
+id = "ruff-format"
+name = "Ruff - Python formatter"
+language = "system"
+entry = "uv run ruff format --force-exclude"
+files = "\\.(py|pyi)$"
+pass_filenames = true
+
+[[repos.hooks]]
+id = "laravel-pint"
+name = "Laravel Pint - PHP code style"
+language = "system"
+entry = "php laravel/vendor/bin/pint"
+files = "^laravel/.*\\.php$"
+pass_filenames = true
+
+[[repos.hooks]]
+id = "web-eslint"
+name = "ESLint - Web React/TypeScript"
+language = "system"
+entry = "npm --prefix web run lint"
+files = "^web/.*(\\.([jt]sx?)|tsconfig.*\\.json|package\\.json|eslint\\.config\\.js)$"
+pass_filenames = false
