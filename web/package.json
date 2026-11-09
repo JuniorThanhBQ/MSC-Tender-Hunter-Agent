@@ -14,7 +14,7 @@
     "react-dom": "^19.3.1"
   },
   "devDependencies": {
-    "@babel/core": "^7.29.7",
+    "@babel/core": "^8.1.0",
     "@eslint/js": "^10.0.1",
     "@go-task/cli": "^3.54.0",
     "@rolldown/plugin-babel": "^0.3.0",
