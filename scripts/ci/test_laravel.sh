@@ -2,6 +2,7 @@
 # SPDX-License-Identifier: MPL-2.0
 
 set -euo pipefail
+: "${LARAVEL_TEST_ENV:?Missing LARAVEL_TEST_ENV as a GitLab variable}"
 
 apt-get update -qq
 apt-get install -y --no-install-recommends ca-certificates curl unzip
@@ -11,14 +12,15 @@ chmod +x /usr/local/bin/composer
 
 cd laravel
 mkdir -p storage/framework/views "$CI_PROJECT_DIR/reports"
-if [ -f "$CI_PROJECT_DIR/.env.test" ]; then
-    cp "$CI_PROJECT_DIR/.env.test" .env.testing
-else
-    cp "$CI_PROJECT_DIR/.env.example" .env.testing
-fi
+cp "$LARAVEL_TEST_ENV" .env.testing
+unset APP_KEY
+sed -i '/^APP_KEY=/d' .env.testing
+printf '\nAPP_KEY=\n' >> .env.testing
+export APP_ENV=testing
 composer validate
 composer install --no-interaction --prefer-dist --optimize-autoloader
 
+php artisan key:generate
 vendor/bin/pint --test
 php artisan test --log-junit "$CI_PROJECT_DIR/reports/laravel-phpunit.xml"
 php artisan migrate --force

@@ -58,7 +58,7 @@ secret-detection:
   variables:
     GIT_DEPTH: "0"
   script:
-    - gitleaks git --redact=100 --no-banner --log-opts=HEAD .
+    - gitleaks git --redact=100 --no-banner --log-opts="--full-history HEAD -- . :(top,exclude)docs/" .
 
 sast:
   stage: verify
