@@ -39,7 +39,7 @@ These are our targets. Actual times may vary.
 - **Acknowledgment:** within 7 days of your report
 - **Initial assessment:** within 7 business days, including whether I accept the report
 - **Status updates:** at least every 14 days until the issue is resolved
-- **Fix and release:** Each version will be numbered as vX.X.X. Security patches are typically part of the third X-numbered rapid patch release. 
+- **Fix and release:** Each version will be numbered as vX.X.X. Security patches are typically part of the third X-numbered rapid patch release.
 
 If I decline the report, I will explain why.
 

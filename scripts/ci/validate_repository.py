@@ -13,11 +13,14 @@ def main():
             raise ValueError(f"Required file missing or empty: {name}")
     paths = [root / ".gitlab-ci.yml", *sorted((root / ".github").rglob("*.yml"))]
     for path in paths:
-        if not path.read_text(encoding="utf-8").strip() and path.parent.name != "workflows":
+        if (
+            not path.read_text(encoding="utf-8").strip()
+            and path.parent.name != "workflows"
+        ):
             continue
         with path.open(encoding="utf-8") as stream:
             if not isinstance(yaml.safe_load(stream), dict):
-                raise ValueError(f"Expected a YAML mapping: {path}")
+                raise TypeError(f"Expected a YAML mapping: {path}")
         print(f"Valid YAML: {path.relative_to(root)}")
     for path in sorted((root / "scripts").rglob("*.py")):
         ast.parse(path.read_text(encoding="utf-8"), filename=str(path))

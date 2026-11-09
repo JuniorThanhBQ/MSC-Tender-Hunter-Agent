@@ -9,7 +9,7 @@
 
 ## 1. Context and Problem Statement
 
-[`ADR-001: Proposed Project Technology Stack`](file:///c:/Users/hp/Desktop/MyProjects/MSC-Tender-Hunter-Agent/docs/adrs/ADR-001-technology-stack.md) selected **React + Vite (Vercel)**, **Laravel (PHP)**, **FastAPI + PydanticAI (Python)**, **Supabase PostgreSQL**, and **Upstash Redis**. 
+[`ADR-001: Proposed Project Technology Stack`](file:///c:/Users/hp/Desktop/MyProjects/MSC-Tender-Hunter-Agent/docs/adrs/ADR-001-technology-stack.md) selected **React + Vite (Vercel)**, **Laravel (PHP)**, **FastAPI + PydanticAI (Python)**, **Supabase PostgreSQL**, and **Upstash Redis**.
 
 Procurement tender evaluation on Vietnam's National Bidding Network System (MSC: `muasamcong.mof.gov.vn`) involves multi-step scraping, document parsing (PDF/Excel), and LLM reasoning that can take 30 to 90 seconds per dossier. In a standard monolithic or single-gateway proxy architecture:
 1. **PHP-FPM Worker Starvation**: Long-lived HTTP streaming connections through Laravel hold worker processes hostage, quickly exhausting concurrency pools.
