@@ -36,9 +36,6 @@ updates:
       include: "scope"
     cooldown:
       default-days: 7
-      semver-major-days: 14
-      semver-minor-days: 7
-      semver-patch-days: 7
 
   - package-ecosystem: "composer"
     directory: "/laravel"
@@ -73,9 +70,6 @@ updates:
       include: "scope"
     cooldown:
       default-days: 7
-      semver-major-days: 14
-      semver-minor-days: 7
-      semver-patch-days: 7
   - package-ecosystem: "npm"
     directories:
       - "/web"
@@ -111,9 +105,6 @@ updates:
       include: "scope"
     cooldown:
       default-days: 7
-      semver-major-days: 14
-      semver-minor-days: 7
-      semver-patch-days: 7
 
   - package-ecosystem: "github-actions"
     directory: "/"
@@ -141,6 +132,3 @@ updates:
       include: "scope"
     cooldown:
       default-days: 7
-      semver-major-days: 14
-      semver-minor-days: 7
-      semver-patch-days: 7
