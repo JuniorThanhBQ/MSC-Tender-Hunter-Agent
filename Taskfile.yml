@@ -1,0 +1,58 @@
+# SPDX-License-Identifier: MPL-2.0
+
+# ---
+# To use Taskfile's automation scripts, please follow the steps below:
+# 1. Install the web package (for the first run, when `node_modules` does not yet exist): npm install --prefix web
+# 2. Syntax for running scripts (root folder): npm --prefix web exec -- task --taskfile Taskfile.yml "SCs”
+# 3. The following SCs are currently supported: help, secrets, up-sonar, quality-check
+# 4. The reason the Taskfile depends on web/ is that I want other developers to avoid having to manually install the Taskfile on their machines.
+# ---
+
+version: '3'
+
+tasks:
+  help:
+    desc: "Display all available Taskfile commands"
+    silent: true
+    aliases: [default]
+    cmds:
+      - |
+        echo ""
+        echo "Available Taskfile Commands:"
+        echo "-------------------------------------------------------------------------------------------------------"
+        echo "  help           - Display all available Taskfile commands"
+        echo "  secrets        - Create a SECRET_KEY and POSTGRES_PASSWORD that meet security standards"
+        echo "  up-sonar       - Starting SonarQube (Please read requirements in sonar.compose.yml)"
+        echo "  quality-check  - Quality check with SonarQube (Requires local SonarQube running)"
+        echo "-------------------------------------------------------------------------------------------------------"
+        echo "Usage: npm --prefix web exec -- task --taskfile Taskfile.yml <command>"
+        echo ""
+
+  secrets:
+    desc: "Create a SECRET_KEY and POSTGRES_PASSWORD that meet security standards"
+    silent: true
+    cmds:
+      - |
+        echo -e "\n"
+
+        echo -n "SECRET_KEY="
+        openssl rand -base64 48 | tr -d '\n'
+        echo -e "\n"
+
+        echo -n "POSTGRES_PASSWORD="
+        python3 scripts/general/postgres_password_generation.py 2>/dev/null || python scripts/general/postgres_password_generation.py
+        echo -e "\n"
+
+  up-sonar:
+    desc: "Starting SonarQube (Please read the requirements in sonar.compose.yml carefully before running the command)"
+    silent: true
+    cmds:
+      - |
+        docker compose -f sonar.compose.yml up -d
+
+  quality-check:
+    desc: "Quality check with SonarQube (Please make sure that SonarQube local is running before using this command)"
+    silent: true
+    cmds:
+      - |
+        docker compose -f sonar.compose.yml run --rm scanner

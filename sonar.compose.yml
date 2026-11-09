@@ -1,0 +1,76 @@
+# SPDX-License-Identifier: MPL-2.0
+
+# ---
+# Note: The SonarQube configuration section is intended specifically for project quality control. It is not recommended for users who are not experienced in configuration.
+# 1. Recommended hardware configuration / VPS: 8 cores - 16GB, at least 30GB SSD
+# 2. Please carefully configure the following .env variables: SONAR_POSTGRES_USER, SONAR_POSTGRES_DB, POSTGRES_PASSWORD
+# 3. Run Docker Sonar: docker compose -f sonar.compose.yml up -d
+# 4. Go to localhost:9000 and change the default password.
+# 5. Create a new project that matches the `sonar.projectKey` and `sonar.projectName` variables in `sonar-project.properties`
+# 6. Create a secret key and select the project scope; the project is the one you just created. Copy the key and paste it into SONAR_TOKEN
+# 7. Run `docker compose -f sonar.compose.yml run --rm scanner` to perform a scan or configure automatic runs for each commit in prek.toml.
+# 8. Note: I suggest you go to Project > Quality Profiles > Edit and select “Sonar Way Comprehensive” for the scan methods to get better results.
+# ---
+
+name: sonar-qube-local
+
+services:
+  db:
+    image: postgres:18.6@sha256:e3d24f6906d0760bf4da0dae872415391ededefad23fd471c47dc53b0ddf3c42
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${SONAR_POSTGRES_DB:?Required}
+      POSTGRES_USER: ${SONAR_POSTGRES_USER:?Required}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Required}
+    volumes:
+      - postgres_data:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U sonar -d sonarqube"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  sonarqube:
+    image: sonarqube:community@sha256:1ce197471f5f2bac347694a336862fd2c23e9f57c6edb46acebbfbe70f2c7d9c
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      SONAR_JDBC_URL: jdbc:postgresql://db:5432/${SONAR_POSTGRES_DB:?Required}
+      SONAR_JDBC_USERNAME: ${SONAR_POSTGRES_USER:?Required}
+      SONAR_JDBC_PASSWORD: ${POSTGRES_PASSWORD:?Required}
+      SONAR_ES_BOOTSTRAP_CHECKS_DISABLE: "true"
+    ports:
+      - "9000:9000"
+    volumes:
+      - sonar_data:/opt/sonarqube/data
+      - sonar_extensions:/opt/sonarqube/extensions
+      - sonar_logs:/opt/sonarqube/logs
+
+  scanner:
+    image: sonarsource/sonar-scanner-cli:latest@sha256:38207bba3d98c8ce6f6c051ea2b9f05a24480da78c9ee5945ceafc3d9de02b88
+    profiles: ["scan"]
+    depends_on:
+      sonarqube:
+        condition: service_started
+    environment:
+      SONAR_HOST_URL: http://sonarqube:9000
+      SONAR_TOKEN: ${SONAR_TOKEN:-}
+      SONAR_USER_HOME: /opt/sonar-scanner/.sonar
+      GIT_CONFIG_COUNT: "1"
+      GIT_CONFIG_KEY_0: safe.directory
+      GIT_CONFIG_VALUE_0: /usr/src
+    volumes:
+      - ./:/usr/src
+      - scanner_cache:/opt/sonar-scanner/.sonar/cache
+    tmpfs:
+      - /tmp
+    working_dir: /usr/src
+
+volumes:
+  postgres_data:
+  sonar_data:
+  sonar_extensions:
+  sonar_logs:
+  scanner_cache:
