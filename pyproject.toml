@@ -1,0 +1,23 @@
+[project]
+name = "MBS-Agent-Tender-Hunter"
+version = "0.1.0"
+description = "MBS Tender Hunter is a project licensed under the MPL v2.0 license, with the goal of automating the search for and analysis of tender packages for businesses"
+readme = "README.md"
+authors = [
+    { name = "Van Trung Thanh", email = "thanh.vantrung2005@gmail.com" }
+]
+requires-python = ">=3.14"
+dependencies = ["engine"]
+
+[tool.uv.sources]
+engine = { workspace = true }
+
+[tool.uv.workspace]
+members = [
+    "engine",
+]
+
+[dependency-groups]
+dev = [
+    "prek>=0.5.10",
+]
