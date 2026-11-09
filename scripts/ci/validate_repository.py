@@ -1,4 +1,5 @@
 # SPDX-License-Identifier: MPL-2.0
+
 import ast
 from pathlib import Path
 
@@ -11,6 +12,7 @@ def main():
         path = root / name
         if not path.is_file() or not path.stat().st_size:
             raise ValueError(f"Required file missing or empty: {name}")
+
     paths = [root / ".gitlab-ci.yml", *sorted((root / ".github").rglob("*.yml"))]
     for path in paths:
         if (
@@ -21,10 +23,9 @@ def main():
         with path.open(encoding="utf-8") as stream:
             if not isinstance(yaml.safe_load(stream), dict):
                 raise TypeError(f"Expected a YAML mapping: {path}")
-        print(f"Valid YAML: {path.relative_to(root)}")
+
     for path in sorted((root / "scripts").rglob("*.py")):
         ast.parse(path.read_text(encoding="utf-8"), filename=str(path))
-        print(f"Valid Python: {path.relative_to(root)}")
     print("Repository validation passed")
 
 

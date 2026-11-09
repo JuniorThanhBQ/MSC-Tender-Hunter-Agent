@@ -1,24 +1,122 @@
 # SPDX-License-Identifier: MPL-2.0
+
+# ---
+# This is a Continuous Integration workflow integrated into GitLab. Its primary purpose is to minimize unnecessary risks before the project goes into production. The workflow consists of the following pipelines:
+# 1. Check repository-validation (though I'm not sure why this is there in the first place).
+# 2. Checking secrets based on GitLeak
+# 3. SAST Testing with semgrep
+# 4. Lint checks for agents (FastAPI), Laravel (PHP), and Web (React + Vite)
+# ---
+
+
 workflow:
   rules:
     - if: '$CI_PIPELINE_SOURCE == "api"'
-    - if: '$CI_COMMIT_BRANCH =~ /^github-ci\//'
-      when: never
     - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+    - if: '$CI_COMMIT_BRANCH'
     - if: '$CI_COMMIT_BRANCH && $CI_OPEN_MERGE_REQUESTS && $CI_PIPELINE_SOURCE == "push"'
       when: never
-    - if: '$CI_COMMIT_BRANCH'
+    - if: '$CI_COMMIT_BRANCH =~ /^github-ci\//'
+      when: never
 
 stages:
   - validate
+  - verify
 
 default:
-  image: python:3.13-slim
   interruptible: true
-  timeout: 10 minutes
+
+.python:
+  image: python:3.14.10-slim@sha256:9aaa474097d094040649f2162a627c0049b408f52138d980916788d80f04802f
+  timeout: 15 minutes
+  variables:
+    UV_NO_PROGRESS: "1"
+    UV_PYTHON_DOWNLOADS: never
+  before_script:
+    - python -m pip install --disable-pip-version-check uv==0.12.21
+
+.node:
+  image: node:24.22.1-bookworm@sha256:d862bb5d082c5ae0210ac07e8c0344cb8cf7bef6d78e9b8c50c179da923108ea
+  timeout: 15 minutes
 
 repository-validation:
   stage: validate
+  image: python:3.14.10-slim@sha256:9aaa474097d094040649f2162a627c0049b408f52138d980916788d80f04802f
+  timeout: 10 minutes
   script:
     - python -m pip install --disable-pip-version-check PyYAML==6.0.3
     - python scripts/ci/validate_repository.py
+    - bash -n scripts/ci/run_semgrep.sh
+    - bash -n scripts/ci/test_laravel.sh
+
+secret-detection:
+  stage: validate
+  timeout: 5 minutes
+  image:
+    name: ghcr.io/gitleaks/gitleaks:v8.30.1@sha256:c00b6bd0aeb3071cbcb79009cb16a60dd9e0a7c60e2be9ab65d25e6bc8abbb7f
+    entrypoint: [""]
+  variables:
+    GIT_DEPTH: "0"
+  script:
+    - gitleaks git --redact=100 --no-banner --log-opts=HEAD .
+
+sast:
+  stage: verify
+  timeout: 15 minutes
+  image:
+    name: semgrep/semgrep:1.184.0@sha256:cc1b68266f267878b39739373ea9985b9a78e5d64497dd875c8de100b22695ed
+    entrypoint: [""]
+  script:
+    - bash scripts/ci/run_semgrep.sh
+  artifacts:
+    access: developer
+    when: always
+    expire_in: 1 week
+    paths:
+      - reports/semgrep.sarif
+
+python-lint:
+  extends: .python
+  stage: verify
+  script:
+    - uv sync --locked --package engine
+    - uv run --no-sync --package engine ruff check engine/src scripts
+    - uv run --no-sync --package engine ruff format --check engine/src scripts
+
+laravel-assets:
+  extends: .node
+  stage: verify
+  script:
+    - cd laravel
+    - npm ci --ignore-scripts --no-audit
+    - npm run build
+  artifacts:
+    expire_in: 1 week
+    paths:
+      - laravel/public/build/
+
+laravel:
+  stage: verify
+  timeout: 15 minutes
+  image: php:8.5-cli@sha256:50956f094e90a716d43bea28087d447555ad80510e386ab8c9c10d8c70d781a9
+  needs:
+    - job: laravel-assets
+      artifacts: true
+  variables:
+    COMPOSER_ALLOW_SUPERUSER: "1"
+  script:
+    - bash scripts/ci/test_laravel.sh
+  artifacts:
+    paths:
+      - reports/laravel-phpunit.xml
+    reports:
+      junit: reports/laravel-phpunit.xml
+
+web:
+  extends: .node
+  stage: verify
+  script:
+    - cd web
+    - npm ci --ignore-scripts --no-audit
+    - npm run lint
+    - npm run build
