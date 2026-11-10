@@ -245,3 +245,4 @@ web/.env.local
 
 # Environment Variables for CI testing
 .env.test
+docs/apis/
