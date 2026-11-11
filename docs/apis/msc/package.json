@@ -1,0 +1,18 @@
+{
+  "name": "msc-tender-search-api-validation",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "playwright test",
+    "lint:spec": "redocly lint --extends=minimal openapi.yaml",
+    "typecheck": "tsc --noEmit",
+    "validate": "npm run lint:spec && npm run typecheck && npm test"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.64.1",
+    "@redocly/cli": "^2.0.0",
+    "@types/node": "^24.10.0",
+    "typescript": "^5.8.2",
+    "zod": "^4.6.7"
+  }
+}

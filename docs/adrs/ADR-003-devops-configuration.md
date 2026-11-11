@@ -1,14 +1,14 @@
 # ADR-003 — Development and CI Configuration
 
-**Status:** Accepted
-**Date:** 2026-11-09
-**Deciders:** TenderHunter development team
+- Status: Accepted
+- Date: 2026-11-10
+- Technical Scope: DevOps, GitHub Action, Issues and PRs template, README.md docs
 
 ## Context
 
 TenderHunter contains a Python agent, a Laravel application, and a React web application. Each component has its own dependency and build requirements. The project needs repeatable dependency management, local quality checks, and automated verification across these components.
 
-The team also needs a consistent way to maintain dependencies, inspect code quality, and configure local services without committing credentials.
+The project also needs a consistent way to maintain dependencies, inspect code quality, and configure local services without committing credentials.
 
 ## Decision
 
@@ -28,11 +28,3 @@ I adopt the following development and verification setup.
 The repository has a consistent set of local checks and CI jobs, and lockfiles make dependency installation more repeatable. Developers need the relevant language runtimes and project dependencies to run all local checks. SonarQube requires its local services and configuration.
 
 The current pipeline performs static security and secret scans. Dynamic application scanning and an agent build or test job require separate implementation when those checks are ready. CI runner isolation and protection of variables remain deployment configuration responsibilities.
-
-## References
-
-- [GitLab CI configuration](../../.gitlab-ci.yml)
-- [Dependabot configuration](../../.github/dependabot.yml)
-- [Prek configuration](../../prek.toml)
-- [Taskfile](../../Taskfile.yml)
-- [SonarQube project configuration](../../sonar-project.properties)

@@ -242,6 +242,10 @@ Laravel/storage/framework/
 web/node_modules/
 web/dist/
 web/.env.local
+node_modules/
+playwright-report/
+test-results/
+
 
 # Environment Variables for CI testing
 .env.test

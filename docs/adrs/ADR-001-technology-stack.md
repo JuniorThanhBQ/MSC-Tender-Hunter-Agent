@@ -19,8 +19,6 @@ TenderHunter requires a client-facing web application, a robust SaaS control pla
 | **Ephemeral Cache & Queue** | Redis (Upstash) | Temporary tender session cache, rate-limiting, job queue |
 | **Protocol Adapters** | FastMCP & A2A SDK | FastMCP (STDIO / Streamable HTTP) and A2A SDK (Agent Cards) |
 
----
-
 ## Architectural Decisions & Service Boundaries
 
 ### 1. Decoupled Client-Server Frontend
@@ -80,8 +78,6 @@ The Python Agent Core is strictly decoupled from Laravel and capable of running 
   - Implemented as an independent adapter layer using the official A2A SDK and authenticated Agent Cards for discovery and multi-agent coordination.
 - MCP and A2A function as non-invasive external protocol adapters wrapped around the core PydanticAI agent.
 
----
-
 ## Agent-Core Selection and Alternatives
 
 PydanticAI is selected as the primary agent framework due to its typed dependency injection, robust schema enforcement, and seamless FastAPI/Starlette integration.
@@ -93,8 +89,6 @@ PydanticAI is selected as the primary agent framework due to its typed dependenc
 | **LlamaIndex** | Retrieval, document evidence, structured extraction, and agent workflows | Document/retrieval abstraction fit for lightweight MVP needs |
 | **Haystack** | Composable retrieval and processing pipelines with tool-using agents | Pipeline composition overhead and fit for the agent service |
 | **CrewAI** | Role-based agents and controlled Flows | Multi-agent coordination overhead, latency, and token consumption |
-
----
 
 ## Points for Future Refinement
 

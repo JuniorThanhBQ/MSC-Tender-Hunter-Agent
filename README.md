@@ -17,7 +17,7 @@
   <a href="https://pypi.org/project/pydantic-ai/2.65.0/"><img src="https://img.shields.io/badge/PydanticAI-2.65.0-E92063?logo=pydantic&logoColor=white" alt="PydanticAI 2.65.0 (selected agent framework)" /></a>
   <a href="https://pypi.org/project/fastapi/0.162.0/"><img src="https://img.shields.io/badge/FastAPI-0.162.0-009688?logo=fastapi&logoColor=white" alt="FastAPI 0.162.0 (planned stack reference)" /></a>
   <a href="https://www.postgresql.org/docs/release/18.6/"><img src="https://img.shields.io/badge/PostgreSQL-18.6-4169E1?logo=postgresql&logoColor=white" alt="PostgreSQL 18.6 (upstream release reference; Supabase version not selected)" /></a>
-  <a href="https://supabase.com/"><img src="https://img.shields.io/badge/Supabase-Database_host-3FCF8E?logo=supabase&logoColor=black" alt="Supabase database hosting (proposed)" /></a>
+  <a href="https://supabase.com/"><img src="https://img.shields.io/badge/Supabase-Database-3FCF8E?logo=supabase&logoColor=black" alt="Supabase database hosting (proposed)" /></a>
 </p>
 
 </div>
@@ -190,6 +190,10 @@ Authentication/SSO implementation, queues, temporary cache, document handling/st
 
 ## IV. Overall Structure of the Project
 
+> [!NOTE]
+>
+> The Overall Structure of the Project is based on the architectural decisions agreed upon in [ADR-002](docs/adrs/ADR-002-system-architecture.md). As of now, I have not yet been able to approve these architectural decisions because there are still quite a few legal issues, and the scope of the Agent’s development has not been finalized (MCP, A2A, or fixed SaaS?). You can view the image below as a preliminary concept I am currently reviewing.
+
 
 ```mermaid
 flowchart TB
@@ -273,14 +277,14 @@ flowchart TB
 
 > [!NOTE]
 >
-> The project is licensed under the Mozilla Public License Version 2.0, with legal terms based on Vietnamese law regarding public procurement, the use of artificial intelligence, and data mining for academic purposes. For further details, please see [License and Legal Issues](docs/legal-issues/)
+> The project is licensed under the Mozilla Public License Version 2.0, with legal terms based on Vietnamese law regarding public procurement, the use of artificial intelligence, and data mining for academic purposes. Further details, please see [License and Legal Issues](docs/legal-issues/) and [Term of Services](docs/legal-issues/term-of-services.md).
 
 ## VI. Contributors
 
-Currently, I am the primary contributor (the developer). There are also some indirect contributors, such as Nhu and Huy (colleagues from my workplace). Other contributions will be listed below:
-1. [Holder 1 - Contribution in 1]()
-2. [Holder 2 - Contribution in 2]()
-3. [Holder 3 - Contribution in 3]()
+Currently, I am the primary contributor (the full-stack developer). There are also some indirect contributors, such as Vo Thi Bich Nhu and Pham Tran Nhat Huy (colleagues from my internship workplace). The contributors will be listed below:
+1. [Van Trung Thanh - Full-stack Developer Role](https://github.com/JuniorThanhBQ/MSC-Tender-Hunter-Agent)
+2. [Vo Thi Bich Nhu - Contribution in 2]
+3. [Pham Tran Nhat Huy - Contribution in 3]
 
 
 ## VII. Documents and References

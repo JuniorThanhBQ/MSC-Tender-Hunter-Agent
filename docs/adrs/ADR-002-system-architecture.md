@@ -1,15 +1,13 @@
 # ADR-002: Split-Gateway Direct-Streaming System Architecture
 
-- Status: Accepted
-- Date: 2026-11-03
-- Deciders: TenderHunter Development Team
+- Status: Pending
+- Date: 2026-11-10
 - Technical Scope: System topology, inter-service protocols, stream authorization, event lifecycle, and failure recovery
 
----
 
 ## 1. Context and Problem Statement
 
-[`ADR-001: Proposed Project Technology Stack`](file:///c:/Users/hp/Desktop/MyProjects/MSC-Tender-Hunter-Agent/docs/adrs/ADR-001-technology-stack.md) selected **React + Vite (Vercel)**, **Laravel (PHP)**, **FastAPI + PydanticAI (Python)**, **Supabase PostgreSQL**, and **Upstash Redis**.
+[`ADR-001: Proposed Project Technology Stack`](ADR-001-technology-stack) selected **React + Vite (Vercel)**, **Laravel (PHP)**, **FastAPI + PydanticAI (Python)**, **Supabase PostgreSQL**, and **Upstash Redis**.
 
 Procurement tender evaluation on Vietnam's National Bidding Network System (MSC: `muasamcong.mof.gov.vn`) involves multi-step scraping, document parsing (PDF/Excel), and LLM reasoning that can take 30 to 90 seconds per dossier. In a standard monolithic or single-gateway proxy architecture:
 1. **PHP-FPM Worker Starvation**: Long-lived HTTP streaming connections through Laravel hold worker processes hostage, quickly exhausting concurrency pools.
@@ -18,11 +16,11 @@ Procurement tender evaluation on Vietnam's National Bidding Network System (MSC:
 
 A concrete system architecture is required to decouple user access control from high-throughput agent streaming while maintaining zero data leaks, low memory overhead, and future compatibility with native mobile apps.
 
----
+
 
 ## 2. Decision: Split-Gateway Direct-Streaming Architecture
 
-We adopt the **Split-Gateway / Direct-Streaming (Client-Server) Architecture**, segregating responsibilities into a **Control Plane** (Laravel) and an **Agent Data Plane** (FastAPI) communicating with a decoupled **Client** (React + Vite on Vercel).
+I adopt the **Split-Gateway / Direct-Streaming (Client-Server) Architecture**, segregating responsibilities into a **Control Plane** (Laravel) and an **Agent Data Plane** (FastAPI) communicating with a decoupled **Client** (React + Vite on Vercel).
 
 ```mermaid
 flowchart TB
@@ -102,7 +100,7 @@ flowchart TB
     class PORTAL external
 ```
 
----
+
 
 ## 3. Detailed Architectural Specifications
 
@@ -116,7 +114,7 @@ flowchart TB
    - Client establishes a direct, persistent HTTP connection to FastAPI's SSE endpoint (`GET /api/v1/stream/{job_id}`) using the browser's native `EventSource` or `fetch` with `ReadableStream`.
    - Bypasses Laravel entirely for token streaming, tool call updates, and step-by-step reasoning progress.
 
----
+
 
 ### 3.2. Cryptographic Stream Grant Contract
 
@@ -138,7 +136,7 @@ To ensure FastAPI never exposes public unauthenticated streaming endpoints or re
   ```
 - **Alternative Consideration**: Symmetric HMAC-SHA256 using a shared secret (`STREAM_GRANT_SECRET`) is maintained as a fallback option for local development or simplified initial deployment if asymmetric key distribution introduces operational friction.
 
----
+
 
 ### 3.3. Job Handshake & Execution Lifecycle (Cache-Only Redis)
 
@@ -160,7 +158,7 @@ Because Redis is hosted on free-tier Upstash, it is reserved strictly for **ephe
    ```
 5. **Background Agent Trigger**: FastAPI spawns an asynchronous background task (`asyncio.create_task`) running the PydanticAI evaluation pipeline.
 
----
+
 
 ### 3.4. Resilient SSE Reconnection & Ephemeral Replay Buffer
 
@@ -177,7 +175,7 @@ To withstand client network drops, Wi-Fi switching, or browser refreshes during 
 3. **Terminal Event**:
    - Once evaluation finishes, FastAPI sends a terminal `event: complete` with the final payload and closes the SSE channel.
 
----
+
 
 ### 3.5. Job Completion Callback & State Synchronization
 
@@ -190,7 +188,7 @@ To withstand client network drops, Wi-Fi switching, or browser refreshes during 
    - **FastAPI**: Persists the full evaluation audit trail, LLM token metrics, and extracted criteria into the `agent` schema.
    - Neither service directly modifies tables belonging to the other.
 
----
+
 
 ## 4. End-to-End Sequence Diagram
 
@@ -236,29 +234,41 @@ sequenceDiagram
     Client->>User: Display Comprehensive Tender Audit Report
 ```
 
----
+
 
 ## 5. Protocol Boundaries: FastMCP & A2A Integration
 
 The architecture preserves complete autonomy for the Python Agent Core:
 
-```
-                         +-----------------------------+
-                         |      Agent Core Logic       |
-                         | (PydanticAI + curl_cffi)    |
-                         +--------------+--------------+
-                                        |
-         +------------------------------+------------------------------+
-         |                              |                              |
-         v                              v                              v
-+------------------+          +------------------+          +------------------+
-| FastAPI Adapter  |          | FastMCP Adapter  |          |   A2A Adapter    |
-| - REST Endpoints |          | - STDIO (Local)  |          | - Agent Cards    |
-| - SSE Streamer   |          | - Streamable HTTP|          | - Authenticated  |
-| - Stream Grants  |          | - Bearer Auth    |          |   P2P Protocol   |
-+------------------+          +------------------+          +------------------+
-         |                              |                              |
-      (SaaS)                      (IDE / Cursor)               (External Agents)
+```mermaid
+flowchart TB
+    CORE["Agent Core Logic<br/>(PydanticAI + curl_cffi)"]
+
+    CORE --> FASTAPI
+    CORE --> FASTMCP
+    CORE --> A2A
+
+    subgraph ADAPTERS[" "]
+        direction LR
+
+        FASTAPI["FastAPI Adapter<br/>──────────────<br/>• REST Endpoints<br/>• SSE Streamer<br/>• Stream Grants"]
+
+        FASTMCP["FastMCP Adapter<br/>──────────────<br/>• STDIO (Local)<br/>• Streamable HTTP<br/>• Bearer Auth"]
+
+        A2A["A2A Adapter<br/>──────────────<br/>• Agent Cards<br/>• Authenticated<br/>  P2P Protocol"]
+    end
+
+    FASTAPI --> SAAS["(SaaS)"]
+    FASTMCP --> IDE["(IDE / Cursor)"]
+    A2A --> EXTERNAL["(External Agents)"]
+
+    classDef core fill:#243B53,color:#FFFFFF,stroke:#486581,stroke-width:2px
+    classDef adapter fill:#E8F1FA,color:#17324D,stroke:#3973A5,stroke-width:1.5px
+    classDef consumer fill:#E7F5EC,color:#205B38,stroke:#4C9A6A,stroke-width:1.5px
+
+    class CORE core
+    class FASTAPI,FASTMCP,A2A adapter
+    class SAAS,IDE,EXTERNAL consumer
 ```
 
 1. **FastMCP**:
@@ -268,8 +278,6 @@ The architecture preserves complete autonomy for the Python Agent Core:
    - Modular interface adapter exposing authenticated Agent Cards for interoperability with external enterprise agents.
 3. Both FastMCP and A2A exist as thin external adapters wrapping the same PydanticAI Agent Core without cross-polluting SaaS-specific HTTP logic.
 
----
-
 ## 6. Forward-Looking Considerations
 
 ### 6.1. MSC Scraping Concurrency and Anti-Bot Policy
@@ -278,8 +286,6 @@ The architecture preserves complete autonomy for the Python Agent Core:
 
 ### 6.2. Key Distribution & Rotation
 - Ed25519 public keys will be mounted via environment variables in the FastAPI container. If key rotation is required, Laravel will expose an internal `/api/internal/jwks.json` endpoint accessible only within the container network.
-
----
 
 ## 7. Consequences and Trade-offs
 
