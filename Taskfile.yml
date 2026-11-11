@@ -21,12 +21,20 @@ tasks:
         echo "Available Taskfile Commands:"
         echo "-------------------------------------------------------------------------------------------------------"
         echo "  help           - Display all available Taskfile commands"
+        echo "  prek-check     - Run Prek check on all project files"
         echo "  secrets        - Create a SECRET_KEY and POSTGRES_PASSWORD that meet security standards"
         echo "  up-sonar       - Starting SonarQube (Please read requirements in sonar.compose.yml)"
         echo "  quality-check  - Quality check with SonarQube (Requires local SonarQube running)"
         echo "-------------------------------------------------------------------------------------------------------"
         echo "Usage: npm --prefix web exec -- task --taskfile Taskfile.yml <command>"
         echo ""
+
+  prek-check:
+    desc: "Run Prek check on all project files"
+    silent: true
+    cmds:
+      - |
+      - prek run --all-files
 
   secrets:
     desc: "Create a SECRET_KEY and POSTGRES_PASSWORD that meet security standards"

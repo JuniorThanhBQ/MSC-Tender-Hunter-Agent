@@ -9,9 +9,9 @@ This document specifies the 14 actor-facing use cases represented by the direct 
 | Use Case Identifier | UC-001 |
 | Use Case Name | Login |
 | Use Case Description | Authenticate a contractor user and start an authorized application session. |
-| Primary Actors | Contractor. |
-| Secondary Actors | Identity Provider. |
-| Preconditions | The contractor has an account and can reach the application and identity provider. |
+| Primary Actors | Contractor |
+| Secondary Actors | Identity Provider |
+| Preconditions | The contractor has an account and can reach the application and Identity Provider |
 | Postconditions | On success, an authenticated session is established for the user and their contractor context. |
 | Activity Flow | 1. The contractor opens the login page and enters the required login information. <br>2. The application authenticates the account based on the information provided. <br>3. The application processes the contractor’s account access permissions and then displays the post-login interface. |
 | Alternative Flow | 1.1. If the user chooses to log in via a service provider, they must be redirected to that provider’s authentication page. <br> 1.2. The application will request the Identity Provider to authenticate the user’s account. <br> 1.3. The application uses the results returned by the Identity Provider to determine the user’s account access permissions and then displays the post-login interface. |
@@ -25,7 +25,7 @@ This document specifies the 14 actor-facing use cases represented by the direct 
 | Use Case Name | Register |
 | Use Case Description | Create a contractor user identity and associate it with the application. |
 | Primary Actors | Contractor |
-| Secondary Actors | Identity Provider. |
+| Secondary Actors | Identity Provider |
 | Preconditions | The contractor is not signed in and has the information required by the registration form. |
 | Postconditions | A new identity record and user record for the application will be created, or the registration process has not yet been completed. However, a session will not be granted until authentication is successful. |
 | Activity Flow | 1. The user opens the “Register” page and enters the required account information. <br>2. The application validates the required fields and verifies the information against existing accounts in the system. <br>3. If the verification returns a valid result, the application creates or links the user’s account and displays the next login step. |
@@ -69,7 +69,7 @@ This document specifies the 14 actor-facing use cases represented by the direct 
 | Use Case Identifier | UC-005 |
 | Use Case Name | Tender Bid Analysis |
 | Use Case Description | Assess a selected tender against the contractor's relevant business profile and present suitability findings to support human review. |
-| Primary Actors | Contractor. |
+| Primary Actors | Contractor |
 | Secondary Actors | None. |
 | Preconditions | The contractor is signed in, a tender is available, and the contractor is authorized to use the relevant contractor context. |
 | Postconditions | An analysis result, including available reasons and risks, is shown for the contractor's review. It is advisory and does not submit a bid. |
@@ -101,7 +101,7 @@ This document specifies the 14 actor-facing use cases represented by the direct 
 | Use Case Description | Ask the tender agent a question and review its response in the current contractor context. |
 | Primary Actors | Contractor |
 | Secondary Actors | None |
-| Preconditions | The contractor is signed in and the agent service is available. Any company context used is authorized for that contractor. |
+| Preconditions | The contractor is signed in and the agent service is available. Any company context used is authorized for that Contractor |
 | Postconditions | The response is shown in the active interaction, tender information follows the MVP temporary-session retention rule. |
 | Activity Flow | 1. The contractor opens the agent conversation and enters a question. <br>2. The system validates the request and applies the contractor's access scope. <br>3. The agent processes the question using available, authorized context. <br>4. The system streams or displays the response for the contractor to review. |
 | Alternative Flow | If no tender or company context is selected, the contractor may ask a general question and the system answers only from the information available to it and signals any limits. |

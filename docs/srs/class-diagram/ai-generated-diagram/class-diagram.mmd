@@ -1,0 +1,690 @@
+classDiagram
+direction LR
+
+namespace LaravelApplication {
+  class Authenticatable <<abstract>>
+
+  class Controller <<abstract>>
+
+  class User <<entity>> {
+    +id: int
+    +name: string
+    +email: string
+    +email_verified_at: datetime?
+    -password: string
+    -remember_token: string?
+    #casts(): array
+  }
+
+  %% ASSUMED
+  class AuthController <<controller>> {
+    +login(credentials: LoginRequest) AuthSession
+    +register(request: RegistrationRequest) User
+  }
+
+  %% ASSUMED
+  class AuthService <<service>> {
+    +login(credentials: LoginRequest) AuthSession
+    +register(request: RegistrationRequest) User
+  }
+
+  %% ASSUMED
+  class LoginRequest <<entity>> {
+    +email: string
+    +password: string
+    +identityProvider: string?
+  }
+
+  %% ASSUMED
+  class RegistrationRequest <<entity>> {
+    +name: string
+    +email: string
+    +password: string
+    +identityProvider: string?
+  }
+
+  %% ASSUMED
+  class AuthSession <<entity>> {
+    +userId: int
+    +tenantId: string
+    +token: string
+    +expiresAt: datetime
+  }
+
+  %% ASSUMED
+  class IdentityProviderPort <<interface>> {
+    +authenticate(request: LoginRequest) ExternalIdentity
+    +verify(request: RegistrationRequest) ExternalIdentity
+  }
+
+  %% ASSUMED
+  class IdentityProviderAdapter <<service>> {
+    +authenticate(request: LoginRequest) ExternalIdentity
+    +verify(request: RegistrationRequest) ExternalIdentity
+  }
+
+  %% ASSUMED
+  class ExternalIdentity <<entity>> {
+    +provider: string
+    +subject: string
+    +email: string
+  }
+
+  %% ASSUMED
+  class CompanyProfileController <<controller>> {
+    +show() CompanyProfile
+    +update(profile: CompanyProfile) CompanyProfile
+  }
+
+  %% ASSUMED
+  class CompanyMemberController <<controller>> {
+    +index() Membership[]
+    +updatePermission(membershipId: int, permissions: string[]) Membership
+  }
+
+  %% ASSUMED
+  class CompanyManagementService <<service>> {
+    +getProfile(tenantId: string) CompanyProfile
+    +updateProfile(tenantId: string, profile: CompanyProfile) CompanyProfile
+    +listMembers(tenantId: string) Membership[]
+    +updatePermissions(tenantId: string, membershipId: int, permissions: string[]) Membership
+  }
+
+  %% ASSUMED
+  class ContractorOrganization <<entity>> {
+    +id: string
+    +name: string
+    +status: string
+    +createdAt: datetime
+  }
+
+  %% ASSUMED
+  class CompanyProfile <<entity>> {
+    +id: string
+    +tenantId: string
+    +businessProfile: Map~string, string~
+    +capabilities: string[]
+    +updatedAt: datetime
+  }
+
+  %% ASSUMED
+  class Membership <<entity>> {
+    +id: int
+    +userId: int
+    +tenantId: string
+    +permissions: string[]
+    +status: string
+  }
+
+  %% ASSUMED
+  class ContractorAdminService <<service>> {
+    +listContractors() ContractorOrganization[]
+    +getContractor(tenantId: string) ContractorOrganization
+    +updateContractor(tenantId: string, contractor: ContractorOrganization) ContractorOrganization
+  }
+
+  %% ASSUMED
+  class AccountManagementService <<service>> {
+    +manageAccount(userId: int) User
+    +disableAccount(userId: int) User
+  }
+
+  %% ASSUMED
+  class StreamGrantIssuer <<service>> {
+    +issue(userId: int, tenantId: string, jobId: string) StreamGrant
+  }
+}
+
+namespace TenderSearch {
+  class Error <<abstract>>
+
+  class TenderSearchClient <<service>> {
+    -request: APIRequestContext
+    -baseUrl: string
+    -maxRequests: int
+    -maxConcurrent: int
+    -minIntervalMs: int
+    -timeoutMs: int
+    -maxRetries: int
+    -maxBackoffMs: int
+    -userAgent: string
+    +requestsSent(): int
+    +constructor(request: APIRequestContext, options: TenderClientOptions)
+    +getCategories(input: unknown) Promise~CategorySearchResponse~
+    +getAreas(input: unknown) Promise~AreaSearchResponse~
+    +getPopularKeywords(input: unknown) Promise~PopularKeywordResponse~
+    -post(path: string, body: unknown, parse: Function) Promise~T~
+    -sendOnce(path: string, body: unknown) Promise~APIResponse~
+  }
+
+  class TenderClientOptions {
+    +baseUrl: string?
+    +maxRequests: int?
+    +maxConcurrent: int?
+    +minIntervalMs: int?
+    +timeoutMs: int?
+    +maxRetries: int?
+    +maxBackoffMs: int?
+    +userAgent: string?
+  }
+
+  class APIRequestContext <<interface>> {
+    +post(url: string, options: object) Promise~APIResponse~
+  }
+
+  class APIResponse <<interface>> {
+    +status() int
+    +ok() boolean
+    +headers() object
+    +json() Promise~unknown~
+  }
+
+  class TenderSummary <<entity>> {
+    +id: string?
+    +notifyId: string?
+    +notifyNo: string?
+    +notifyNoStand: string?
+    +bidName: string[]?
+    +investorName: string?
+    +publicDate: string?
+    +bidCloseDate: string?
+    +locations: TenderLocationSchema[]?
+    +status: string?
+    +bidId: string?
+    +bidNo: string?
+  }
+
+  class TenderLocationSchema <<interface>> {
+    +provCode: string?
+    +provName: string?
+    +districtCode: string?
+    +districtName: string?
+    +parentCode: string?
+    +name: string?
+  }
+
+  class NormalizedTender <<entity>> {
+    +notificationNumber: string?
+    +title: string
+    +investorName: string?
+    +publicDate: string?
+    +closingDate: string?
+    +locations: object[]
+    +source: TenderSummary
+  }
+
+  class SearchRequest {
+    +pageSize: int
+    +pageNumber: string
+    +query: SearchClauseSchema[]
+  }
+
+  class SearchClauseSchema <<interface>> {
+    +index: string
+    +keyWord: string
+    +matchType: string
+    +matchFields: string[]
+    +filters: SearchFilterSchema[]
+  }
+
+  class SearchFilterSchema <<interface>> {
+    +fieldName: string
+    +searchType: string
+    +fieldValues: string[]
+  }
+
+  class SearchResponse {
+    +page: SearchPageSchema
+  }
+
+  class CategorySearchResponse {
+    +categories: Map~string, CategoryOptionSchema[]~
+  }
+
+  class CategoryOptionSchema <<interface>> {
+    +code: string
+    +name: string
+    +nameEn: string
+    +categoryTypeCode: string
+  }
+
+  class AreaSearchResponse {
+    +areas: AreaSchema[]
+  }
+
+  class AreaSchema <<interface>> {
+    +code: string?
+    +areaType: string?
+    +name: string?
+    +parentCode: string?
+  }
+
+  class PopularKeywordResponse {
+    +page: PopularKeywordPageSchema
+  }
+
+  class PopularKeywordPageSchema <<interface>> {
+    +content: PopularKeywordSchema[]
+    +totalElements: int
+    +totalPages: int
+    +currentPage: int
+  }
+
+  class PopularKeywordSchema <<interface>> {
+    +id: string
+    +keyword: string
+    +resultType: string
+    +linkUrl: string
+    +status: int
+  }
+
+  class SearchPageSchema {
+    +content: TenderSummary[]
+  }
+
+  class PaginationOptions {
+    +keyword: string
+    +pageSize: int?
+    +maxPages: int?
+    +maxRequests: int?
+    +delayMs: int?
+  }
+
+  class PaginationResult {
+    +items: NormalizedTender[]
+    +pagesFetched: int
+    +stopReason: string
+  }
+
+  class Parsed~T~ {
+    +data: T
+    +unexpectedFields: string[]
+  }
+
+  class ContractValidationError {
+    +issues: object[]
+    +constructor(operation: string, issues: object[])
+  }
+
+  class ApiHttpError {
+    +status: int
+    +path: string
+    +retryAfter: string?
+    +constructor(status: int, path: string, retryAfter: string?)
+  }
+
+  class RequestBudgetError {
+    +constructor()
+  }
+
+  %% ASSUMED
+  class TenderSearchController <<controller>> {
+    +search(criteria: SearchCriteria) TenderSummary[]
+    +viewDetail(tenderId: string) TenderDetail
+  }
+
+  %% ASSUMED
+  class TenderSearchService <<service>> {
+    +search(criteria: SearchCriteria) TenderSummary[]
+    +viewDetail(tenderId: string) TenderDetail
+  }
+
+  %% ASSUMED
+  class SearchCriteria <<entity>> {
+    +keyword: string?
+    +filters: SearchFilterSchema[]
+    +pageSize: int
+    +pageNumber: string
+  }
+
+  %% ASSUMED
+  class TenderDetail <<entity>> {
+    +tenderId: string
+    +summary: TenderSummary
+    +publishedFields: Map~string, string~
+    +retrievedAt: datetime
+  }
+
+  %% ASSUMED
+  class BidAnalysisService <<service>> {
+    +analyze(tenderId: string, tenantId: string) BidAnalysisResult
+  }
+
+  %% ASSUMED
+  class BidAnalysisResult <<entity>> {
+    +id: string
+    +tenderId: string
+    +tenantId: string
+    +suitability: number?
+    +reasons: string[]
+    +risks: string[]
+    +uncertainties: string[]
+    +isAdvisory: boolean
+  }
+
+  %% ASSUMED
+  class AnalysisFinding <<entity>> {
+    +requirement: string
+    +assessment: string
+    +evidence: string?
+    +risk: string?
+  }
+
+  %% ASSUMED
+  class WatchlistController <<controller>> {
+    +index() WatchlistEntry[]
+    +add(tenderId: string) WatchlistEntry
+  }
+
+  %% ASSUMED
+  class WatchlistService <<service>> {
+    +list(tenantId: string, userId: int) WatchlistEntry[]
+    +add(tenantId: string, userId: int, tenderId: string) WatchlistEntry
+  }
+
+  %% ASSUMED
+  class WatchlistRepository <<interface>> {
+    +list(tenantId: string, userId: int) WatchlistEntry[]
+    +insert(entry: WatchlistEntry) WatchlistEntry
+  }
+
+  %% ASSUMED
+  class PostgresWatchlistRepository <<repository>> {
+    +list(tenantId: string, userId: int) WatchlistEntry[]
+    +insert(entry: WatchlistEntry) WatchlistEntry
+  }
+
+  %% ASSUMED
+  class WatchlistEntry <<entity>> {
+    +id: int
+    +tenantId: string
+    +userId: int
+    +tenderId: string
+    +addedAt: datetime
+  }
+}
+
+namespace AgentInteraction {
+  %% ASSUMED
+  class ChatController <<controller>> {
+    +ask(request: ChatRequest) ChatMessage
+  }
+
+  %% ASSUMED
+  class AgentConversationService <<service>> {
+    +ask(userId: int, tenantId: string, request: ChatRequest) ChatMessage
+  }
+
+  %% ASSUMED
+  class ChatRequest <<entity>> {
+    +conversationId: string?
+    +question: string
+    +tenderId: string?
+    +tenantId: string
+  }
+
+  %% ASSUMED
+  class Conversation <<entity>> {
+    +id: string
+    +userId: int
+    +tenantId: string
+    +createdAt: datetime
+  }
+
+  %% ASSUMED
+  class ChatMessage <<entity>> {
+    +id: string
+    +conversationId: string
+    +role: string
+    +content: string
+    +createdAt: datetime
+  }
+
+  %% ASSUMED
+  class AgentRuntime <<service>> {
+    +answer(request: ChatRequest) ChatMessage
+    +evaluate(tender: TenderSummary, profile: CompanyProfile) BidAnalysisResult
+  }
+
+  %% ASSUMED
+  class EvaluationJob <<entity>> {
+    +id: string
+    +tenantId: string
+    +userId: int
+    +tenderId: string
+    +status: string
+    +createdAt: datetime
+    +completedAt: datetime?
+  }
+
+  %% ASSUMED
+  class StreamGrant <<entity>> {
+    +subjectUserId: int
+    +tenantId: string
+    +jobId: string
+    +allowedEvents: string[]
+    +expiresAt: datetime
+  }
+
+  %% ASSUMED
+  class AgentStreamService <<service>> {
+    +stream(jobId: string, grant: StreamGrant, lastEventId: string?) StreamEvent[]
+    +replay(jobId: string, lastEventId: string?) StreamEvent[]
+  }
+
+  %% ASSUMED
+  class StreamEvent <<entity>> {
+    +eventId: string
+    +jobId: string
+    +eventType: string
+    +payload: object
+    +createdAt: datetime
+  }
+
+  %% ASSUMED
+  class EventReplayStore <<interface>> {
+    +append(event: StreamEvent) void
+    +replayAfter(jobId: string, lastEventId: string?) StreamEvent[]
+  }
+
+  %% ASSUMED
+  class RedisEventReplayStore <<repository>> {
+    +append(event: StreamEvent) void
+    +replayAfter(jobId: string, lastEventId: string?) StreamEvent[]
+  }
+
+  %% ASSUMED
+  class NotificationController <<controller>> {
+    +index() Notification[]
+    +show(notificationId: int) Notification
+    +delete(notificationId: int) boolean
+  }
+
+  %% ASSUMED
+  class NotificationService <<service>> {
+    +list(userId: int, tenantId: string) Notification[]
+    +get(userId: int, notificationId: int) Notification
+    +delete(userId: int, notificationId: int) boolean
+  }
+
+  %% ASSUMED
+  class Notification <<entity>> {
+    +id: int
+    +userId: int
+    +tenantId: string
+    +title: string
+    +body: string
+    +createdAt: datetime
+    +readAt: datetime?
+  }
+}
+
+namespace SaaSAdministration {
+  %% ASSUMED
+  class AgentAdminService <<service>> {
+    +getConfiguration() AgentConfiguration
+    +updateConfiguration(configuration: AgentConfiguration) AgentConfiguration
+  }
+
+  %% ASSUMED
+  class AgentConfiguration <<entity>> {
+    +id: string
+    +prompt: PromptConfiguration
+    +policy: PolicyConfiguration
+    +model: ModelConfiguration
+    +updatedAt: datetime
+  }
+
+  %% ASSUMED
+  class PromptConfiguration <<entity>> {
+    +template: string
+    +version: string
+  }
+
+  %% ASSUMED
+  class PolicyConfiguration <<entity>> {
+    +rules: string[]
+    +version: string
+  }
+
+  %% ASSUMED
+  class ModelConfiguration <<entity>> {
+    +provider: string
+    +modelName: string
+    +parameters: Map~string, string~
+  }
+
+  %% ASSUMED
+  class StatisticsController <<controller>> {
+    +userStatistics(filter: StatisticsFilter) UserStatistics
+    +agentStatistics(filter: StatisticsFilter) AgentStatistics
+  }
+
+  %% ASSUMED
+  class StatisticsService <<service>> {
+    +userStatistics(filter: StatisticsFilter) UserStatistics
+    +agentStatistics(filter: StatisticsFilter) AgentStatistics
+  }
+
+  %% ASSUMED
+  class StatisticsFilter <<entity>> {
+    +periodStart: date
+    +periodEnd: date
+    +tenantId: string?
+  }
+
+  %% ASSUMED
+  class UserStatistics <<entity>> {
+    +period: StatisticsFilter
+    +activeUsers: int
+    +newUsers: int
+    +tenantCount: int
+  }
+
+  %% ASSUMED
+  class AgentStatistics <<entity>> {
+    +period: StatisticsFilter
+    +runCount: int
+    +completionCount: int
+    +failureCount: int
+    +tokenCount: int
+  }
+}
+
+Controller <|-- AuthController : handles authentication
+Controller <|-- CompanyProfileController : maintains profile
+Controller <|-- CompanyMemberController : maintains membership
+Controller <|-- TenderSearchController : searches tenders
+Controller <|-- WatchlistController : manages watchlist
+Controller <|-- ChatController : accepts agent questions
+Controller <|-- NotificationController : manages notifications
+Controller <|-- StatisticsController : presents statistics
+User --|> Authenticatable : extends Laravel auth model
+
+AuthController ..> AuthService : delegates
+AuthService ..> User : authenticates and creates
+AuthService ..> IdentityProviderPort : verifies identity
+IdentityProviderAdapter ..|> IdentityProviderPort : implements
+AuthService ..> AuthSession : establishes session
+IdentityProviderAdapter ..> ExternalIdentity : returns verified identity
+
+ContractorOrganization "1" *-- "1" CompanyProfile : owns
+ContractorOrganization "1" *-- "0..*" Membership : has members
+User "1" -- "0..*" Membership : participates through
+CompanyProfileController ..> CompanyManagementService : delegates
+CompanyMemberController ..> CompanyManagementService : delegates
+CompanyManagementService ..> ContractorOrganization : scopes changes to
+CompanyManagementService ..> CompanyProfile : reads and updates
+CompanyManagementService ..> Membership : lists and changes
+ContractorAdminService ..> ContractorOrganization : manages
+AccountManagementService ..> User : enables or disables
+
+TenderSearchController ..> TenderSearchService : delegates
+TenderSearchService ..> TenderSearchClient : retrieves portal data
+TenderSearchClient ..> TenderClientOptions : configures requests
+TenderSearchClient ..> APIRequestContext : sends HTTP requests
+TenderSearchClient ..> CategorySearchResponse : parses categories
+TenderSearchClient ..> AreaSearchResponse : parses areas
+TenderSearchClient ..> PopularKeywordResponse : parses popular keywords
+TenderSearchService ..> SearchRequest : builds query
+TenderSearchService ..> SearchResponse : parses response
+SearchRequest "1" *-- "1..*" SearchClauseSchema : contains
+SearchClauseSchema "1" *-- "0..*" SearchFilterSchema : contains
+SearchResponse "1" *-- "1" SearchPageSchema : contains
+SearchPageSchema "1" *-- "0..*" TenderSummary : returns
+TenderSummary "1" *-- "0..*" TenderLocationSchema : includes
+CategorySearchResponse "1" *-- "0..*" CategoryOptionSchema : contains
+AreaSearchResponse "1" *-- "0..*" AreaSchema : contains
+PopularKeywordResponse "1" *-- "1" PopularKeywordPageSchema : contains
+PopularKeywordPageSchema "1" *-- "0..*" PopularKeywordSchema : contains
+NormalizedTender "0..*" --> "1" TenderSummary : normalizes source
+TenderSearchService ..> TenderDetail : retrieves current detail
+TenderSearchClient ..> ContractValidationError : rejects invalid contract
+TenderSearchClient ..> ApiHttpError : reports HTTP failure
+TenderSearchClient ..> RequestBudgetError : enforces request limit
+ContractValidationError --|> Error : extends
+ApiHttpError --|> Error : extends
+RequestBudgetError --|> Error : extends
+
+BidAnalysisService ..> TenderSummary : evaluates
+BidAnalysisService ..> CompanyProfile : uses authorized context
+BidAnalysisService ..> AgentRuntime : requests advisory analysis
+BidAnalysisService ..> BidAnalysisResult : returns
+BidAnalysisService ..> EvaluationJob : starts evaluation
+BidAnalysisResult "1" *-- "0..*" AnalysisFinding : explains assessment
+WatchlistController ..> WatchlistService : delegates
+WatchlistService ..> WatchlistEntry : creates and lists references
+WatchlistService ..> WatchlistRepository : persists references
+PostgresWatchlistRepository ..|> WatchlistRepository : implements
+WatchlistEntry ..> TenderSummary : resolves summary when displayed
+WatchlistService ..> ContractorOrganization : scopes entries by tenant
+
+ChatController ..> AgentConversationService : delegates
+AgentConversationService ..> Conversation : maintains interaction
+Conversation "1" *-- "0..*" ChatMessage : contains messages
+AgentConversationService ..> AgentRuntime : processes question
+AgentConversationService ..> CompanyProfile : reads authorized context
+StreamGrantIssuer ..> StreamGrant : issues short-lived access
+AgentStreamService ..> StreamGrant : validates scope and expiry
+AgentStreamService ..> EvaluationJob : streams job progress
+AgentStreamService ..> EventReplayStore : reads replay buffer
+RedisEventReplayStore ..|> EventReplayStore : implements
+EvaluationJob "1" -- "0..*" StreamEvent : emits progress events
+AgentRuntime ..> EvaluationJob : executes
+NotificationController ..> NotificationService : delegates
+NotificationService ..> Notification : retrieves and deletes
+NotificationService ..> ContractorOrganization : scopes access
+
+AgentAdminService ..> AgentConfiguration : manages
+AgentConfiguration "1" *-- "1" PromptConfiguration : contains
+AgentConfiguration "1" *-- "1" PolicyConfiguration : contains
+AgentConfiguration "1" *-- "1" ModelConfiguration : contains
+StatisticsController ..> StatisticsService : delegates
+StatisticsService ..> UserStatistics : aggregates users
+StatisticsService ..> AgentStatistics : aggregates agent runs
+StatisticsService ..> StatisticsFilter : applies period and scope
+UserStatistics "0..*" *-- "1" StatisticsFilter : reports period
+AgentStatistics "0..*" *-- "1" StatisticsFilter : reports period
+
+note for TenderSearchClient "Implemented in docs/apis/msc/src/client/tender-search-client.ts. Its class exposes categories, areas and popular-keyword methods; the public tender search itself is currently a module function."
+note for User "Implemented as App.Models.User. The tenant, company profile and role relationships shown here are requirements-derived assumptions."

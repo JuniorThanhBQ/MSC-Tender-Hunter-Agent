@@ -277,7 +277,7 @@ flowchart TB
 
 > [!NOTE]
 >
-> The project is licensed under the Mozilla Public License Version 2.0, with legal terms based on Vietnamese law regarding public procurement, the use of artificial intelligence, and data mining for academic purposes. For further details, please see [License and Legal Issues](docs/legal-issues/)
+> The project is licensed under the Mozilla Public License Version 2.0, with legal terms based on Vietnamese law regarding public procurement, the use of artificial intelligence, and data mining for academic purposes. Further details, please see [License and Legal Issues](docs/legal-issues/) and [Term of Services](docs/legal-issues/term-of-services.md).
 
 ## VI. Contributors
 

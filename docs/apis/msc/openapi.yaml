@@ -1,0 +1,815 @@
+openapi: 3.1.0
+info:
+  title: National e-Procurement Portal Search Services (Observed)
+  version: 0.2.0
+  description: |
+    This portal does not have a stable public API, searches are performed exclusively through the public API interface using short-lived tokens that are not stored, reused, or hard-coded. Only HTTP 200 responses have been verified.
+servers:
+  - url: https://muasamcong.mof.gov.vn
+    description: Public portal origin.
+tags:
+  - name: Tender search
+    description: Public contractor-selection search used by the portal UI.
+  - name: Search filters
+    description: Category, area, and popular-keyword data used to render search controls.
+paths:
+  /o/egp-portal-contractor-selection-v2/services/smart/search:
+    post:
+      tags:
+        - Tender search
+      operationId: searchPublicTenders
+      summary: Search public contractor-selection notices
+      description: |
+        The request included a transient query token. The purpose and lifetime were not
+        independently established. Direct APIRequestContext access was not
+        attempted. Use the public UI response-capture flow unless the portal
+        confirms another supported access method. The
+        response metadata field names were not confirmed.
+      security:
+        - PortalRequestToken: []
+      parameters:
+        - $ref: '#/components/parameters/PortalReferer'
+        - $ref: '#/components/parameters/PortalCookieContext'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/SearchRequest'
+            examples:
+              publicUiSearch:
+                summary: Captured public search for a Vietnamese keyword
+                value:
+                  - pageSize: 10
+                    pageNumber: "0"
+                    query:
+                      - index: es-contractor-selection
+                        keyWord: thiết bị y tế
+                        matchType: all-1
+                        matchFields:
+                          - notifyNo
+                          - bidName
+                        filters:
+                          - fieldName: type
+                            searchType: in
+                            fieldValues:
+                              - es-notify-contractor
+                          - fieldName: caseKHKQ
+                            searchType: not_in
+                            fieldValues:
+                              - "1"
+      responses:
+        '200':
+          $ref: '#/components/responses/SearchSuccess'
+        default:
+          $ref: '#/components/responses/UnobservedError'
+      x-verified: true
+      x-verification-scope: Public UI flow only with direct API access and tokenless access were not verified.
+      x-evidence:
+        observedAt: '2026-11-10'
+        browser: Google Chrome DevTools Network
+        requestId: 535
+        status: 200
+        test: tests/browser-capture.spec.ts
+        testName: search happy path captures and validates the normal UI response
+  /o/egp-portal-contractor-selection-v2/services/get/category:
+    post:
+      security: []
+      tags:
+        - Search filters
+      operationId: getSearchCategories
+      summary: Load categories used by search filters
+      parameters:
+        - $ref: '#/components/parameters/PortalCookieContext'
+      description: |
+        Observed twice in the public search page flow. One request contained 26
+        category type codes and another contained DM_BAOGIA and DM_HT_BAOGIA.
+        Both returned HTTP 200 JSON. The response groups arrays under a
+        categories object keyed by category type code. Category membership and
+        values may change over time.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CategorySearchRequest'
+            examples:
+              quoteCategories:
+                summary: Observed request for quotation categories
+                value:
+                  categoryTypeCodeLst:
+                    - DM_BAOGIA
+                    - DM_HT_BAOGIA
+      responses:
+        '200':
+          $ref: '#/components/responses/CategorySuccess'
+        default:
+          $ref: '#/components/responses/UnobservedError'
+      x-verified: true
+      x-verification-scope: Public search page flow with direct access outside its browser session was not verified.
+      x-evidence:
+        observedAt: '2026-11-10'
+        browser: Google Chrome DevTools Network
+        requestIds:
+          - 499
+          - 500
+        status: 200
+        test: tests/api-contract.spec.ts
+        testName: category lookup validates, returns options, and sends a descriptive User-Agent
+  /o/egp-portal-contractor-selection-v2/services/get/area:
+    post:
+      security: []
+      tags:
+        - Search filters
+      operationId: getSearchAreas
+      summary: Load geographic areas for search filters
+      parameters:
+        - $ref: '#/components/parameters/PortalCookieContext'
+      description: |
+        Observed in the public contractor-selection page flow. The captured
+        request asked for areaType "1" below parentCode "VN". The response
+        contained an areas array with geographic names, codes, hierarchy
+        fields, and audit metadata. Some hierarchy fields were null. Only the
+        captured top-level area query has been verified.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AreaSearchRequest'
+            example:
+              areaType: "1"
+              parentCode: VN
+      responses:
+        '200':
+          $ref: '#/components/responses/AreaSuccess'
+        default:
+          $ref: '#/components/responses/UnobservedError'
+      x-verified: true
+      x-verification-scope: Public search page flow and child-area queries and direct access were not verified.
+      x-evidence:
+        observedAt: '2026-11-10'
+        browser: Google Chrome DevTools Network
+        requestId: 501
+        status: 200
+        test: tests/api-contract.spec.ts
+        testName: area lookup validates geographic fields and preserves unknown fields
+  /o/egp-portal-contractor-selection-v2/services/popular-keyword/get-list:
+    post:
+      security: []
+      tags:
+        - Search filters
+      operationId: getPopularSearchKeywords
+      summary: Load popular search keywords
+      parameters:
+        - $ref: '#/components/parameters/PortalCookieContext'
+      description: |
+        Observed in the public contractor-selection page flow. The captured
+        request used pageSize 100, pageNumber 1, sort "createdDate desc", and
+        popularKeyword.status 1. The response returned a page object with
+        content and pagination metadata. The request's sort syntax and
+        pagination conventions have not been tested beyond this captured call.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PopularKeywordRequest'
+            example:
+              pageSize: 100
+              pageNumber: 1
+              sort: createdDate desc
+              popularKeyword:
+                status: 1
+      responses:
+        '200':
+          $ref: '#/components/responses/PopularKeywordSuccess'
+        default:
+          $ref: '#/components/responses/UnobservedError'
+      x-verified: true
+      x-verification-scope: Public search page flow and other sort, page, and filter combinations were not verified.
+      x-evidence:
+        observedAt: '2026-11-10'
+        browser: Google Chrome DevTools Network
+        requestId: 502
+        status: 200
+        test: tests/api-contract.spec.ts
+        testName: popular-keyword lookup validates page metadata and preserves unexpected fields
+components:
+  securitySchemes:
+    PortalRequestToken:
+      type: apiKey
+      in: query
+      name: token
+      description: |
+        A transient value supplied by the portal during the observed public UI
+        search flow. Its exact purpose and validity period were not established.
+        It is not a user credential and must not be fabricated, persisted, or
+        replayed. It does not
+        establish a supported direct-access method.
+  parameters:
+    PortalReferer:
+      name: Referer
+      in: header
+      required: false
+      description: |
+        Browser navigation context observed on the search request. It was not
+        established as required by the service.
+      schema:
+        type: string
+        format: uri
+      example: https://muasamcong.mof.gov.vn/web/guest/contractor-selection?render=index
+    PortalCookieContext:
+      name: Cookie
+      in: header
+      required: false
+      description: |
+        Browser requests carried portal session, locale/support, load-balancer,
+        and analytics cookies. Their presence was observed, but no cookie was
+        proven required. Values are transient and must not be hard-coded or
+        persisted.
+      schema:
+        type: string
+  responses:
+    SearchSuccess:
+      description: Search response observed with HTTP 200.
+      headers:
+        Cache-Control:
+          schema:
+            type: string
+          description: Cache directive observed as private.
+        Date:
+          schema:
+            type: string
+          description: Response date observed in the HTTP header.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/SearchResponse'
+          examples:
+            redactedTender:
+              summary: Redacted tender summary based on an observed response
+              value:
+                page:
+                  content:
+                    - id: 00000000-0000-4000-8000-000000000001
+                      notifyId: 00000000-0000-4000-8000-000000000001
+                      bidCloseDate: '2026-11-19T10:10:00'
+                      bidForm: DTRR
+                      bidMode: 1_MTHS
+                      bidName:
+                        - Mua sắm trang thiết bị y tế
+                      investField:
+                        - HH
+                      isInternet: 1
+                      locations:
+                        - provCode: "66"
+                          provName: Tỉnh Đắk Lắk
+                          districtCode: "22207"
+                          districtName: Xã Sông Hinh
+                      notifyNo: IB2600XXXXXX
+                      notifyVersion: "00"
+                      notifyNoStand: IB2600XXXXXX-00
+                      processApply: LDT
+                      publicDate: '2026-11-10T10:44:54.66'
+                      status: "01"
+                      investorName: REDACTED
+                      investorCode: REDACTED
+                      bidOpenDate: '2026-11-19T10:10:00'
+                      originalPublicDate: '2026-11-10T10:44:54.66'
+                      planType: TX
+                      planNo: PL2600XXXXXX
+                      stepCode: notify-contractor-step-1-tbmt
+                      type: es-notify-contractor
+                      statusForNotify: ""
+                      numPetition: 0
+                      numClarifyReq: 0
+                      numBidderTech: 0
+                      bidId: 00000000-0000-4000-8000-000000000002
+                      bidPrice:
+                        - 1678200000
+                      score: "NaN"
+                      isDomestic: 1
+    CategorySuccess:
+      description: Category response observed with HTTP 200.
+      headers:
+        Cache-Control:
+          schema:
+            type: string
+        Date:
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/CategorySearchResponse'
+          example:
+            categories:
+              DM_BAOGIA:
+                - code: THUOC
+                  name: Gói thầu mua thuốc
+                  nameEn: Drug purchase package
+                  categoryTypeCode: DM_BAOGIA
+              DM_HT_BAOGIA:
+                - code: OFFLINE
+                  name: Trực tiếp
+                  nameEn: Offline
+                  categoryTypeCode: DM_HT_BAOGIA
+    AreaSuccess:
+      description: Area response observed with HTTP 200.
+      headers:
+        Cache-Control:
+          schema:
+            type: string
+        Date:
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/AreaSearchResponse'
+          example:
+            areas:
+              - code: "01"
+                areaType: "1"
+                name: Thành phố Hà Nội
+                nameTranslate: Hanoi City
+                orderIndex: 690
+                status: 1
+                parentCode: VN
+                parent: null
+                parentDTO: null
+                groupCode: MB
+                createdDate: '2025-06-21T02:45:24'
+                lastModifiedDate: '2025-06-21T02:45:24'
+    PopularKeywordSuccess:
+      description: Popular-keyword response observed with HTTP 200.
+      headers:
+        Cache-Control:
+          schema:
+            type: string
+        Date:
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/PopularKeywordResponse'
+          example:
+            page:
+              content:
+                - id: REDACTED
+                  keyword: Máy đặt máy mượn
+                  resultType: LINK
+                  linkUrl: https://muasamcong.mpi.gov.vn/web/guest/contractor-selection?render=index
+                  answerContent: null
+                  status: 1
+                  displayOrder: 3
+                  createdDate: '2026-08-14T19:37:58.828'
+                  updatedDate: '2026-08-14T21:33:55.642'
+              totalPages: 1
+              pageSize: 100
+              currentPage: 1
+              totalElements: 7
+              sort:
+                sorted: true
+                unsorted: false
+                empty: false
+              last: true
+              first: true
+              empty: false
+    UnobservedError:
+      description: |
+        No non-200 response was captured for this operation. Status, headers,
+        content type, and error body are unknown.
+  schemas:
+    SearchRequest:
+      type: object
+      required:
+        - pageSize
+        - pageNumber
+        - query
+      properties:
+        pageSize:
+          type: integer
+          description: Number of records requested per page which 10 was observed.
+          example: 10
+        pageNumber:
+          type: string
+          description: Page index was sent as the string "0" and other values were not verified.
+          example: "0"
+        query:
+          type: array
+          items:
+            $ref: '#/components/schemas/SearchClause'
+      additionalProperties: true
+    SearchClause:
+      type: object
+      required:
+        - index
+        - keyWord
+        - matchType
+        - matchFields
+        - filters
+      properties:
+        index:
+          type: string
+          example: es-contractor-selection
+        keyWord:
+          type: string
+          example: thiết bị y tế
+        matchType:
+          type: string
+          example: all-1
+        matchFields:
+          type: array
+          items:
+            type: string
+          example:
+            - notifyNo
+            - bidName
+        filters:
+          type: array
+          items:
+            $ref: '#/components/schemas/SearchFilter'
+      additionalProperties: true
+    SearchFilter:
+      type: object
+      required:
+        - fieldName
+        - searchType
+        - fieldValues
+      properties:
+        fieldName:
+          type: string
+          example: type
+        searchType:
+          type: string
+          example: in
+        fieldValues:
+          type: array
+          items:
+            type: string
+          example:
+            - es-notify-contractor
+      additionalProperties: true
+    SearchResponse:
+      type: object
+      required:
+        - page
+      properties:
+        page:
+          $ref: '#/components/schemas/SearchPage'
+      additionalProperties: true
+    SearchPage:
+      type: object
+      required:
+        - content
+      properties:
+        content:
+          type: array
+          items:
+            $ref: '#/components/schemas/TenderSummary'
+      description: Search pagination input was observed and response metadata keys were not confirmed.
+      additionalProperties: true
+    TenderSummary:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        notifyId:
+          type: string
+          format: uuid
+        notifyNo:
+          type: string
+        notifyVersion:
+          type: string
+        notifyNoStand:
+          type: string
+        bidName:
+          type: array
+          items:
+            type: string
+        investorName:
+          type: string
+        investorCode:
+          type: string
+        publicDate:
+          type: string
+          description: ISO-like local timestamp observed without a timezone suffix.
+        originalPublicDate:
+          type: string
+          description: ISO-like local timestamp observed without a timezone suffix.
+        bidCloseDate:
+          type: string
+          description: ISO-like local timestamp observed without a timezone suffix.
+        bidOpenDate:
+          type: string
+          description: ISO-like local timestamp observed without a timezone suffix.
+        bidForm:
+          type: string
+        bidMode:
+          type: string
+        investField:
+          type: array
+          items:
+            type: string
+        bidField:
+          type: string
+        isInternet:
+          type: integer
+        locations:
+          type: array
+          items:
+            $ref: '#/components/schemas/TenderLocation'
+        processApply:
+          type: string
+        status:
+          type: string
+        statusForNotify:
+          type: string
+        planType:
+          type: string
+        planNo:
+          type: string
+        stepCode:
+          type: string
+        type:
+          type: string
+        numPetition:
+          type: integer
+        numClarifyReq:
+          type: integer
+        numBidderTech:
+          type: integer
+        numPetitionHsmt:
+          type: integer
+        numPetitionLcnt:
+          type: integer
+        numPetitionKqlcnt:
+          type: integer
+        bidId:
+          type: string
+          format: uuid
+        bidNo:
+          type: string
+        bidPrice:
+          type: array
+          items:
+            type: number
+        priceInit:
+          type: number
+        priceStep:
+          type: number
+        score:
+          type: string
+          description: The literal string "NaN" was observed and numeric score semantics are unknown.
+        isMedicine:
+          type: integer
+        isDomestic:
+          type: integer
+        isMultiLot:
+          type: integer
+        workType:
+          type: string
+      description: Optional fields varied between the five fully inspected records.
+      additionalProperties: true
+    TenderLocation:
+      type: object
+      properties:
+        provCode:
+          type: string
+        provName:
+          type: string
+        districtCode:
+          type: string
+        districtName:
+          type: string
+        parentCode:
+          type: string
+        name:
+          type: string
+      additionalProperties: true
+    CategorySearchRequest:
+      type: object
+      required:
+        - categoryTypeCodeLst
+      properties:
+        categoryTypeCodeLst:
+          type: array
+          items:
+            type: string
+          example:
+            - DM_BAOGIA
+            - DM_HT_BAOGIA
+      additionalProperties: true
+    CategorySearchResponse:
+      type: object
+      required:
+        - categories
+      properties:
+        categories:
+          type: object
+          additionalProperties:
+            type: array
+            items:
+              $ref: '#/components/schemas/CategoryOption'
+      additionalProperties: true
+    CategoryOption:
+      type: object
+      required:
+        - code
+        - name
+        - nameEn
+        - categoryTypeCode
+      properties:
+        code:
+          type: string
+        name:
+          type: string
+        nameEn:
+          type: string
+        categoryTypeCode:
+          type: string
+      additionalProperties: true
+    AreaSearchRequest:
+      type: object
+      required:
+        - areaType
+        - parentCode
+      properties:
+        areaType:
+          type: string
+          example: "1"
+        parentCode:
+          type: string
+          example: VN
+      additionalProperties: true
+    AreaSearchResponse:
+      type: object
+      required:
+        - areas
+      properties:
+        areas:
+          type: array
+          items:
+            $ref: '#/components/schemas/Area'
+      additionalProperties: true
+    Area:
+      type: object
+      properties:
+        code:
+          type: string
+        areaType:
+          type: string
+        name:
+          type: string
+        nameTranslate:
+          type: string
+        orderIndex:
+          type: integer
+        status:
+          type: integer
+        parentCode:
+          type: string
+        parent:
+          type:
+            - object
+            - "null"
+          additionalProperties: true
+        parentDTO:
+          type:
+            - object
+            - "null"
+          additionalProperties: true
+        groupCode:
+          type: string
+        createdDate:
+          type: string
+        createdBy:
+          type: string
+        lastModifiedDate:
+          type: string
+        lastModifiedBy:
+          type: string
+      additionalProperties: true
+    PopularKeywordRequest:
+      type: object
+      required:
+        - pageSize
+        - pageNumber
+        - sort
+        - popularKeyword
+      properties:
+        pageSize:
+          type: integer
+          example: 100
+        pageNumber:
+          type: integer
+          example: 1
+        sort:
+          type: string
+          example: createdDate desc
+        popularKeyword:
+          type: object
+          required:
+            - status
+          properties:
+            status:
+              type: integer
+              example: 1
+          additionalProperties: true
+      additionalProperties: true
+    PopularKeywordResponse:
+      type: object
+      required:
+        - page
+      properties:
+        page:
+          $ref: '#/components/schemas/PopularKeywordPage'
+      additionalProperties: true
+    PopularKeywordPage:
+      type: object
+      required:
+        - content
+        - totalPages
+        - pageSize
+        - currentPage
+        - totalElements
+        - sort
+        - last
+        - first
+        - empty
+      properties:
+        content:
+          type: array
+          items:
+            $ref: '#/components/schemas/PopularKeyword'
+        totalPages:
+          type: integer
+        pageSize:
+          type: integer
+        currentPage:
+          type: integer
+        totalElements:
+          type: integer
+        sort:
+          $ref: '#/components/schemas/SortState'
+        last:
+          type: boolean
+        first:
+          type: boolean
+        empty:
+          type: boolean
+      additionalProperties: true
+    SortState:
+      type: object
+      required:
+        - sorted
+        - unsorted
+        - empty
+      properties:
+        sorted:
+          type: boolean
+        unsorted:
+          type: boolean
+        empty:
+          type: boolean
+      additionalProperties: true
+    PopularKeyword:
+      type: object
+      required:
+        - id
+        - keyword
+        - resultType
+        - linkUrl
+        - answerContent
+        - status
+        - displayOrder
+        - createdDate
+        - updatedDate
+      properties:
+        id:
+          type: string
+        keyword:
+          type: string
+        resultType:
+          type: string
+        linkUrl:
+          type: string
+        answerContent:
+          type:
+            - string
+            - "null"
+        status:
+          type: integer
+        displayOrder:
+          type: integer
+        createdDate:
+          type: string
+        updatedDate:
+          type: string
+      additionalProperties: true
